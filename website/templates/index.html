@@ -1,20 +1,20 @@
 {% extends "base.html" %}
 {% block body %}
 <div class="columns">
-    <div class="column col-xs-2"></div>
-    <div class="column col-xs-8">
-        <h2>I enjoy writing boilerplate.</h2>
-        <blockquote>
-            <p>Boilerplate sure is nice.</p>
-            <cite>- Some insane person</cite>
-        </blockquote>
-        <div class="divider"></div>
-        {% if user %}
-        <p>Logged in as {{ user.username }}#{{ user.discriminator }}</p>
-        {% else %}
-        <button class="btn btn-primary btn-lg">Login with Discord</button>
-        {% endif %}
-    </div>
-    <div class="column col-xs-2"></div>
+  <div class="column col-xs-2"></div>
+  <div class="column col-xs-8">
+    <h2>I enjoy writing boilerplate.</h2>
+    <blockquote>
+      <p>Boilerplate sure is nice.</p>
+      <cite>- Some insane person</cite>
+    </blockquote>
+    <div class="divider"></div>
+    {% if user %}
+    <p>Logged in as {{ user.username }}#{{ user.discriminator }}</p>
+    {% else %}
+    <button class="btn btn-primary btn-lg">Login with Discord</button>
+    {% endif %}
+  </div>
+  <div class="column col-xs-2"></div>
 </div>
 {% endblock %}
