@@ -1,10 +1,12 @@
-from website import app, make_session, get_current_user, DISCORD_AUTH_BASE_URL, DISCORD_TOKEN_URL
+from website import app
 from flask import render_template, session, request, redirect, url_for
+from .discord import make_session, User, DISCORD_AUTH_BASE_URL, DISCORD_TOKEN_URL
 
 @app.route('/')
 @app.route('/index')
 def index():
-    user = get_current_user()
+    user = User.current()
+    print(user)
     return render_template('index.html', user=user)
 
 @app.route('/login')
