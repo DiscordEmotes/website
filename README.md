@@ -22,3 +22,12 @@ OAUTH2_REDIRECT_URI = 'http://localhost:5000/callback'
 
 SECRET_KEY = OAUTH2_SECRET_KEY
 ```
+
+Next up do the following:
+
+```
+$ export FLASK_APP=run.py
+$ export FLASK_DEBUG=1
+$ python3 -m flask initdb
+$ python3 -m flask run
+```

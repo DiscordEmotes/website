@@ -2,13 +2,19 @@ from flask import Flask, session
 import os
 from requests_oauthlib import OAuth2Session
 import requests
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 app.config.from_object('config')
+app.config.update(
+    SQLALCHEMY_DATABASE_URI='sqlite:///' + os.path.join(app.root_path, 'app.db'),
+    SQLALCHEMY_TRACK_MODIFICATIONS=False
+)
+
+db = SQLAlchemy(app)
 
 if 'http://' in app.config['OAUTH2_REDIRECT_URI']:
     os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = 'true'
-
 
 DISCORD_API_URL         = 'https://discordapp.com/api'
 DISCORD_AUTH_BASE_URL   = DISCORD_API_URL + '/oauth2/authorize'
@@ -46,4 +52,4 @@ def get_current_user():
 
         return user.json() if user.status_code == 200 else None
 
-from . import views
+from . import views, models
