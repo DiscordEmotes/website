@@ -1,13 +1,13 @@
 from website import app
 from flask import render_template, session, request, redirect, url_for
-from .discord import make_session, User, DISCORD_AUTH_BASE_URL, DISCORD_TOKEN_URL
+from .discord import make_session, User, Guild, DISCORD_AUTH_BASE_URL, DISCORD_TOKEN_URL
 
 @app.route('/')
 @app.route('/index')
 def index():
     user = User.current()
-    print(user)
-    return render_template('index.html', user=user)
+    guilds = Guild.managed()
+    return render_template('index.html', user=user, guilds=guilds)
 
 @app.route('/login')
 def login():

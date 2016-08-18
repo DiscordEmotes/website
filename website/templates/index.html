@@ -9,8 +9,14 @@
       <cite>- Some insane person</cite>
     </blockquote>
     <div class="divider"></div>
-    {% if user %}
-    <p>Logged in as {{ user.username }}#{{ user.discriminator }}</p>
+    {% if user and guilds %}
+    <p>Logged in as {{ user.name }}#{{ user.discriminator }}</p>
+    <p>Managed Guilds</p>
+    <ul>
+      {% for guild in guilds %}
+      <li>{{ guild.name }}</li>
+      {% endfor %}
+    </ul>
     {% else %}
     <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg">Login with Discord</a>
     {% endif %}

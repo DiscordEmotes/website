@@ -57,3 +57,40 @@ class User:
             default = int(self.discriminator) % 5
             return 'https://cdn.discordapp.com/embed/avatars/{}.png'.format(default)
         return 'https://cdn.discordapp.com/avatars/{0.id}/{0.avatar}.jpg'.format(self)
+
+class Guild:
+    def __init__(self, data):
+        self.id = data.get('id')
+        self.name = data.get('name')
+        self.icon = data.get('icon')
+        self.owner = data.get('owner')
+        self.permissions = data.get('permissions')
+
+    @classmethod
+    def managed(cls):
+        """Returns the Guilds that the current user has Manage Server on."""
+        token = session.get('oauth2_token')
+        if token is None:
+            return []
+
+        with make_session(token=token) as discord:
+            guilds = discord.get(DISCORD_API_URL + '/users/@me/guilds')
+            if guilds.status_code != 200:
+                session.pop('oauth2_token')
+                return []
+
+            ret = []
+            data = guilds.json()
+            for entry in data:
+                # check if the user has MANAGE_GUILD in
+                if entry['permissions'] & 0x00000020 == 0x00000020:
+                    ret.append(cls(entry))
+
+            return ret
+
+    @property
+    def icon_url(self):
+        if self.icon is None:
+            return None
+
+        return 'https://cdn.discordapp.com/icons/{0.id}/{0.avatar}.jpg'.format(self)
