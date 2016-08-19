@@ -3,13 +3,11 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-widthm initial-scale=1.0">
-  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='spectre.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bulma.css') }}">
   <title>{{ '%s - ' % title if title }}Discord Emotes</title>
 </head>
 <body>
-  <div class="container">
-    {% block body %}
-    {% endblock %}
-  </div>
+  {% block body %}
+  {% endblock %}
 </body>
 </html>

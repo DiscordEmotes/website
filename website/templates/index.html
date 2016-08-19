@@ -1,26 +1,25 @@
 {% extends "base.html" %}
 {% block body %}
-<div class="columns">
-  <div class="column col-xs-2"></div>
-  <div class="column col-xs-8">
-    <h2>I enjoy writing boilerplate.</h2>
-    <blockquote>
-      <p>Boilerplate sure is nice.</p>
-      <cite>- Some insane person</cite>
-    </blockquote>
-    <div class="divider"></div>
-    {% if user and guilds %}
-    <p>Logged in as {{ user.name }}#{{ user.discriminator }}</p>
-    <p>Managed Guilds</p>
-    <ul>
-      {% for guild in guilds %}
-      <li>{{ guild.name }}</li>
-      {% endfor %}
-    </ul>
-    {% else %}
-    <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg">Login with Discord</a>
-    {% endif %}
+<div class="columns">>
+  <div class="column is-8 is-offset-2">
+    <div class="content">
+      <h2>I enjoy writing boilerplate.</h2>
+      <blockquote>
+        <p>Boilerplate sure is nice.</p>
+        <cite>- Some insane person</cite>
+      </blockquote>
+      {% if user and guilds %}
+      <p>Logged in as {{ user.name }}#{{ user.discriminator }}</p>
+      <p>Managed Guilds</p>
+      <ul>
+        {% for guild in guilds %}
+        <li>{{ guild.name }}</li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <a href="{{ url_for('login') }}" class="button is-primary">Login with Discord</a>
+      {% endif %}
+    </div>
   </div>
-  <div class="column col-xs-2"></div>
 </div>
 {% endblock %}
