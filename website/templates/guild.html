@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="content">
+  <h2>Emotes for {{ guild.name }}</h2>
+  {%- for column in emotes | batch(4) %}
+  <div class="columns">
+    {%- for emote in column %}
+    <div class="column emote-entry">
+      <figure class="image is-128x128">
+        <img src="http://placehold.it/128x128">
+        <figcaption>{{ emote.name }}</figcaption>
+      </figure>
+    </div>
+    {%- endfor %}
+  </div>
+  {%- endfor %}
+</div>
+{% endblock %}

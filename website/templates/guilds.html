@@ -12,7 +12,7 @@
         </div>
         <div class="media-content">
           <div class="content">
-            <a href="#">{{ guild.name }}</a>
+            <a href="{{ url_for('guild', guild_id=guild.id) }}">{{ guild.name }}</a>
           </div>
         </div>
       </article>

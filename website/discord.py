@@ -60,7 +60,7 @@ class User:
 
 class Guild:
     def __init__(self, data):
-        self.id = data.get('id')
+        self.id = int(data.get('id'))
         self.name = data.get('name')
         self.icon = data.get('icon')
         self.owner = data.get('owner')

@@ -1,6 +1,7 @@
 from website import app
-from flask import render_template, session, request, redirect, url_for
+from flask import render_template, session, request, redirect, url_for, abort
 from .discord import make_session, User, Guild, DISCORD_AUTH_BASE_URL, DISCORD_TOKEN_URL
+from .models import Emote
 
 @app.route('/')
 @app.route('/index')
@@ -42,3 +43,14 @@ def guilds():
 
     guilds = Guild.managed()
     return render_template('guilds.html', user=user, guilds=guilds, title='My Servers')
+
+@app.route('/guilds/<int:guild_id>')
+def guild(guild_id):
+    user = User.current()
+    guilds = Guild.managed()
+    guild = next(filter(lambda g: g.id == guild_id, guilds), None)
+    if guild is None:
+        abort(404)
+
+    emotes = Emote.guild_emotes(guild_id)
+    return render_template('guild.html', user=user, emotes=emotes, guild=guild, title=guild.name)
