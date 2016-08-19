@@ -93,4 +93,4 @@ class Guild:
         if self.icon is None:
             return None
 
-        return 'https://cdn.discordapp.com/icons/{0.id}/{0.avatar}.jpg'.format(self)
+        return 'https://cdn.discordapp.com/icons/{0.id}/{0.icon}.jpg'.format(self)
