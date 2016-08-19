@@ -9,12 +9,15 @@ def index():
     guilds = Guild.managed()
     return render_template('index.html', user=user, guilds=guilds)
 
-@app.route('/login')
-def login():
+def get_auth_url():
     with make_session() as discord:
         url, state = discord.authorization_url(DISCORD_AUTH_BASE_URL)
         session['oauth2_state'] = state
-        return redirect(url)
+        return url
+
+@app.route('/login')
+def login():
+    return redirect(get_auth_url())
 
 @app.route('/callback')
 def callback():
@@ -29,4 +32,13 @@ def callback():
 
         session['oauth2_token'] = token
         session.permanent = True
-        return redirect(url_for('index'))
+        return redirect(url_for('guilds'))
+
+@app.route('/guilds')
+def guilds():
+    user = User.current()
+    if user is None:
+        return redirect(get_auth_url())
+
+    guilds = Guild.managed()
+    return render_template('guilds.html', user=user, guilds=guilds, title='My Servers')

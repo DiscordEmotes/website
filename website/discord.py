@@ -94,3 +94,4 @@ class Guild:
             return None
 
         return 'https://cdn.discordapp.com/icons/{0.id}/{0.icon}.jpg'.format(self)
+

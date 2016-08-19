@@ -4,12 +4,39 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-widthm initial-scale=1.0">
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bulma.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='custom.css') }}">
   <title>{{ '%s - ' % title if title }}Discord Emotes</title>
 </head>
 <body>
-  <div class="container">
-    {% block body %}
-    {% endblock %}
-  </div>
+  <section class="hero is-light">
+    <div class="hero-head">
+      <nav class="nav">
+        <div class="container">
+          <div class="nav-left">
+            <a class="nav-item is-brand" href="{{ url_for('index') }}">Discord Emotes</a>
+          </div>
+
+          <div class="nav-right nav-menu">
+            {% if not user %}
+            <a class="nav-item" href="{{ url_for('login') }}">Login with Discord</a>
+            {% else %}
+            <a class="nav-item" href="{{ url_for('guilds') }}">
+              <span class="icon avatar">
+                <img src="{{ user.avatar_url }}">
+              </span>
+              <span>{{ user.name }}</span>
+            </a>
+            {% endif %}
+          </div>
+        </div>
+      </nav>
+    </div>
+  </section>
+  <section class="section">
+    <div class="container">
+      {% block body %}
+      {% endblock %}
+    </div>
+  </section>
 </body>
 </html>
