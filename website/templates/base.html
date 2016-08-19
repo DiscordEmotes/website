@@ -18,7 +18,9 @@
 
           <div class="nav-right nav-menu">
             {% if not user %}
-            <a class="nav-item" href="{{ url_for('login') }}">Login with Discord</a>
+            <span class="nav-item">
+              <a class="button is-primary" href="{{ url_for('login') }}">Login with Discord</a>
+            </span>
             {% else %}
             <a class="nav-item" href="{{ url_for('guilds') }}">
               <span class="icon avatar">
