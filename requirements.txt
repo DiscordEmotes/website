@@ -2,3 +2,4 @@ flask
 requests_oauthlib
 sqlalchemy
 flask-sqlalchemy
+flask-migrate

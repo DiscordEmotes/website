@@ -28,6 +28,6 @@ Next up do the following:
 ```
 $ export FLASK_APP=run.py
 $ export FLASK_DEBUG=1
-$ python3 -m flask initdb
+$ python3 -m flask db upgrade
 $ python3 -m flask run
 ```

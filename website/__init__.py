@@ -1,5 +1,7 @@
 from flask import Flask
 import os
+
+from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
@@ -10,6 +12,8 @@ app.config.update(
 app.config.from_object('config')
 
 db = SQLAlchemy(app)
+
+migrate = Migrate(app, db)
 
 if 'http://' in app.config['OAUTH2_REDIRECT_URI']:
     os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = 'true'
