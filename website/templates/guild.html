@@ -14,5 +14,7 @@
     {%- endfor %}
   </div>
   {%- endfor %}
+
+  <a href="{{ url_for('add_emote', guild_id=guild.id) }}" class="button is-primary">Add Emote</a>
 </div>
 {% endblock %}

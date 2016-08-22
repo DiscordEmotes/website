@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="content">
+  <div class="columns">
+    <div class="column">
+      <h2>New Emote</h2>
+      <form method="POST" enctype="multipart/form-data">
+        {{ form.csrf_token }}
+
+        {{ form.emote.label(class_='label') }}
+        <p class="control">
+          {{ form.emote }}
+          {% if form.emote.errors %}
+          <span class="help is-danger">{{ form.emote.errors[0] }}</span>
+          {% endif %}
+        </p>
+        {{ form.name.label(class_='label') }}
+        <p class="control">
+          {% if form.name.errors %}
+          {{ form.name(class_='input is-danger') }}
+          <span class="help is-danger">{{ form.name.errors[0] }}</span>
+          {% else %}
+          {{ form.name(class_='input') }}
+          {% endif %}
+        </p>
+        <p class="control">
+          <label class="checkbox">
+            {{ form.shared(checked=True, class_='checkbox') }}
+            {{ form.shared.label.text }}
+          </label>
+        </p>
+        <p class="control">
+          <input type="submit" value="Submit" class="button is-primary">
+        </p>
+      </form>
+    </div>
+    <div class="column">
+      <h2>Placeholder</h2>
+      <p>Don't be a dick</p>
+    </div>
+  </div>
+</div>
+{% endblock %}

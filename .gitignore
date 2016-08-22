@@ -1,4 +1,6 @@
 *.pyc
 *.pyo
 *.db
+*.png
+*.jpg
 config.py

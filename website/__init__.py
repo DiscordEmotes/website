@@ -6,10 +6,18 @@ from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 app.config.update(
+    MAX_CONTENT_LENGTH=2*1024*1024, # 2 MiB max upload
     SQLALCHEMY_DATABASE_URI='sqlite:///' + os.path.join(app.root_path, 'app.db'),
     SQLALCHEMY_TRACK_MODIFICATIONS=False
 )
 app.config.from_object('config')
+
+app.config['UPLOAD_FOLDER'] = os.path.realpath(app.config['UPLOAD_FOLDER'])
+
+try:
+    os.makedirs(app.config['UPLOAD_FOLDER'])
+except OSError:
+    pass
 
 db = SQLAlchemy(app)
 
