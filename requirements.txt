@@ -5,3 +5,4 @@ flask-sqlalchemy
 flask-migrate
 wtforms
 flask-wtf
+flask-admin

@@ -1,11 +1,62 @@
-from website import app, db
+from website import app, db, admin
 from werkzeug.utils import secure_filename
 from flask import render_template, session, request, redirect, url_for, abort, flash
+from flask_admin.contrib.sqla import ModelView
+from flask_admin.actions import action
+from jinja2 import Markup
+
 from .discord import make_session, User, Guild, DISCORD_AUTH_BASE_URL, DISCORD_TOKEN_URL
 from .models import Emote
 from .utils import get_image_size
 from .forms import EmoteUploadForm
+
+from gettext import ngettext
 import os, hashlib
+
+class EmoteView(ModelView):
+    column_searchable_list = ['name', 'owner_id']
+    column_filters = ['verified', 'shared']
+    column_labels = {
+        'owner_id': 'Guild ID',
+        'filename': 'Emote'
+    }
+
+    @action('verify', 'Verify', 'Are you sure you want to verify the selected emotes?')
+    def action_verify(self, ids):
+        try:
+            new_ids = [int(i) for i in ids]
+
+            # TODO: potentially modify this to call some Emote.verify() function
+            # that triggers a callback instead of calling update on filter
+            query = Emote.query.filter(Emote.id.in_(new_ids)).update(dict(verified=True), synchronize_session='fetch')
+            db.session.commit()
+            flash(ngettext('Emote successfully verified.',
+                           '%s emotes were successfully verified.' % query,
+                           query))
+        except Exception as e:
+            if not self.handle_view_exception(e):
+                raise
+
+            flash('Failed to verify emotes. %s' % str(e), 'error')
+
+    def _filename_formatter(view, context, model, name):
+        if not model.filename:
+            return ''
+        return Markup('<figure><img src="http://placehold.it/64x64"></figure>')
+
+    def _bool_formatter(view, context, model, name):
+        if getattr(model, name, False):
+            return 'Yes'
+        return 'No'
+
+    column_formatters = {
+        'filename': _filename_formatter,
+        'shared': _bool_formatter,
+        'verified': _bool_formatter
+    }
+
+
+admin.add_view(EmoteView(Emote, db.session))
 
 @app.route('/')
 @app.route('/index')
