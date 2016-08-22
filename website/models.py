@@ -1,3 +1,9 @@
+import os
+
+from flask import current_app as app
+from flask_sqlalchemy import SignallingSession
+from sqlalchemy import event
+
 from website import db
 
 class Emote(db.Model):
@@ -14,3 +20,18 @@ class Emote(db.Model):
     @classmethod
     def guild_emotes(cls, guild_id):
         return cls.query.filter_by(owner_id=guild_id).all()
+
+def handle_deletes(session, flush_context):
+    # Delete all emotes in session.dirty
+    for emote in session.deleted:
+        if not isinstance(emote, Emote):
+            continue
+
+        filename = os.path.join(app.config['UPLOAD_FOLDER'], emote.filename)
+        try:
+            os.remove(filename)
+        except OSError:
+            continue
+
+# register to SignallingSession instead of db.session otherwise an ArgumentError is raised
+event.listen(SignallingSession, "after_flush", handle_deletes)
