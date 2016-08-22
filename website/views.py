@@ -59,6 +59,20 @@ def guild(guild_id):
     emotes = Emote.guild_emotes(guild_id)
     return render_template('guild.html', user=user, emotes=emotes, guild=guild, title=guild.name)
 
+@app.route('/guilds/<int:guild_id>/emotes/<int:emote_id>')
+def emote(guild_id, emote_id):
+    user = User.current()
+    guilds = Guild.managed()
+    guild = next(filter(lambda g: g.id == guild_id, guilds), None)
+    if guild is None:
+        abort(404)
+
+    emotes = Emote.guild_emotes(guild_id)
+    emote = next(filter(lambda e: e.id == emote_id, emotes), None)
+    if emote is None:
+        abort(404)
+    return render_template('emote.html', user=user, emote=emote, guild=guild, title=emote.name)
+
 @app.route('/guilds/<int:guild_id>/emotes/new', methods=['GET', 'POST'])
 def add_emote(guild_id):
     # TODO: @app.before_request this noise

@@ -7,7 +7,7 @@
     {%- for emote in column %}
     <div class="column emote-entry">
       <figure class="image is-128x128">
-        <img src="http://placehold.it/128x128">
+        <a href="{{ url_for('emote', guild_id=guild.id, emote_id=emote.id) }}"><img src="http://placehold.it/128x128"></a>
         <figcaption>{{ emote.name }}</figcaption>
       </figure>
     </div>

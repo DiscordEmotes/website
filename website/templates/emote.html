@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="content">
+  <h1>{{ emote.name }}
+    {% if emote.shared %}
+    <span class="tag is-success">Shared</span>
+    {% else %}
+    <span class="tag is-dark">Not Shared</span>
+    {% endif %}
+  </h1>
+  {% if not emote.verified %}
+  <div class="notification is-info">
+    This emote is awaiting approval. You won't be able to use it in Discord yet.
+  </div>
+  {% endif %}
+  <table class="table">
+    <tbody>
+      <tr>
+        <td><strong>Emote</strong></td>
+        <td><figure class="image is-128x128"><img src="http://placehold.it/128x128"></figure></td>
+      </tr>
+      <tr>
+        <td><strong>Name</strong></td>
+        <td>{{ emote.name }}</td>
+      </tr>
+      <tr>
+        <td><strong>Server</strong></td>
+        <td>{{ guild.name }}</td>
+      </tr>
+    </tbody>
+  </table>
+  <nav class="level">
+    <div class="level-left">
+      <div class="level-item">
+          <a href="{{ url_for('guild', guild_id=guild.id) }}" class="button is-primary">Back to {{ guild.name }}</a>
+      </div>
+    </div>
+    <div class="level-right">
+      <div class="level-item"><a class="button is-info">
+        {% if emote.shared %}
+        Make private
+        {% else %}
+        Make shared
+        {% endif %}
+      </a></div>
+      <div class="level-item"><a class="button is-danger">Delete emote</a></div>
+    </div>
+  </nav>
+</div>
+{% endblock %} 
