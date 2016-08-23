@@ -1,20 +1,61 @@
 {% extends "base.html" %}
 {% block body %}
-<div class="content">
-  <h2>Emotes for {{ guild.name }}</h2>
-  {%- for column in emotes | batch(4) %}
-  <div class="columns">
-    {%- for emote in column %}
-    <div class="column emote-entry">
-      <figure class="image is-128x128">
-        <a href="{{ url_for('emote', guild_id=guild.id, emote_id=emote.id) }}"><img src="http://placehold.it/128x128"></a>
-        <figcaption>{{ emote.name }}</figcaption>
-      </figure>
+<section class="section">
+  <div class="container">
+    <div class="heading">
+      <h1 class="title">{{ guild.name }}</h1>
     </div>
-    {%- endfor %}
+    <div class="content">
+      This is a list of all of the emotes that have been added to <strong>{{ guild.name }}</strong>. To add a new emote, press the <strong>Upload Emote</strong> button below, or search our <a href="#">Shared Library</a>.
+    </div>
+    {% if emotes %}
+    <table class="table">
+      <thead>
+        <tr>
+          <th></th>
+          <th>Name</th>
+          <th>Shared</th>
+          <th>Approved</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for emote in emotes %}
+        <tr>
+          <td class="has-text-centered"><a href="{{ url_for('emote', guild_id=guild.id, emote_id=emote.id) }}"><img src="http://placehold.it/32x32"></a></td>
+          <td><a href="{{ url_for('emote', guild_id=guild.id, emote_id=emote.id) }}">{{ emote.name }}</a></td>
+          {% if emote.shared %}
+          <td><span class="tag is-success">Yes</span></td>
+          {% else %}
+          <td><span class="tag is-danger">No</span></td>
+          {% endif %}
+          {% if emote.verified %}
+          <td><span class="tag is-success">Yes</span></td>
+          {% else %}
+          <td><span class="tag is-warning">Pending</span></td>
+          {% endif %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div class="content">
+      <div class="notification">
+        This server currently has no emotes. Why not add some?
+      </div>
+    </div>
+    {% endif %}
+    <nav class="level">
+      <div class="level-left">
+        <div class="level-item">
+            <a href="{{ url_for('guilds') }}" class="button is-primary">Back to My Servers</a>
+        </div>
+      </div>
+      <div class="level-right">
+        <div class="level-item"><a href="{{ url_for('add_emote', guild_id=guild.id) }}" class="button is-success">
+          Upload Emote
+        </a></div>
+      </div>
+    </nav>
   </div>
-  {%- endfor %}
-
-  <a href="{{ url_for('add_emote', guild_id=guild.id) }}" class="button is-primary">Add Emote</a>
-</div>
+</section>
 {% endblock %}

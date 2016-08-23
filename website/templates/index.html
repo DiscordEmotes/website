@@ -1,23 +1,39 @@
 {% extends "base.html" %}
 {% block body %}
-<div class="content">
-  <h2>I enjoy writing boilerplate.</h2>
-  <blockquote>
-    <p>Boilerplate sure is nice.</p>
-    <cite>- Some insane person</cite>
-  </blockquote>
-  {% if user %}
-  <p>Logged in as {{ user.name }}#{{ user.discriminator }}</p>
-  <p>Managed Guilds</p>
-  {% if guilds %}
-  <ul>
-    {% for guild in guilds %}
-    <li>{{ guild.name }}</li>
-    {% endfor %}
-  </ul>
-  {% else %}
-  <p>No guilds found</p>
-  {% endif %}
-  {% endif %}
-</div>
+<section class="section">
+  <div class="container">
+    <div class="heading">
+      <h1 class="title">Welcome to Discord Emotes</h1>
+    </div>
+    <div class="content">
+      DiscordEmotes allows you to add personality to your Discord server through emotes. It's quick, easy, and hooks in directly with Discord - so no registration is required.
+    </div>
+  </div>
+</section>
+<section class="hero is-medium is-emoji is-bold">
+  <div class="hero-body">
+    <div class="container">
+      <div class="columns">
+        <div class="column has-text-right">
+          <h1 class="title">
+            Start adding emotes now
+          </h1>
+          <h2 class="subtitle">
+            Enhance your server!
+          </h2>
+        </div>
+        <div class="column has-text-left">
+          {% if not user %}
+          <a class="button is-primary is-large" href="{{ url_for('login') }}">
+            <span>Login with Discord</span>
+          </a>
+          {% else %}
+          <a class="button is-primary is-large" href="{{ url_for('guilds') }}">
+            <span>My Servers</span>
+          </a>
+          {% endif %}
+        </div>
+    </div>
+  </div>
+</section>
 {% endblock %}

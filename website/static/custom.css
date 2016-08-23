@@ -8,16 +8,15 @@ html {
 }
 
 .icon.avatar {
-    display: inline-block;
-    padding: 2px 4px 2px 2px;
-    width: 32px;
-    height: 32px;
+    background-repeat: no-repeat;
+    background-position: 50%;
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
 }
 
 .avatar img {
     border-radius: 50%;
-    max-height: 100%;
-    height: 100%;
 }
 
 .guild-entry {
@@ -25,4 +24,31 @@ html {
     padding: 5px;
     display: flex;
     align-items: center;
+}
+
+.hero.is-emoji {
+    background: url(/static/bg.png) no-repeat center center fixed; 
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    color: #fff;
+}
+
+.hero.is-emoji .title {
+  color: #f5f7fa;
+}
+
+.hero.is-emoji .title a,
+.hero.is-emoji .title strong {
+  color: inherit;
+}
+
+.hero.is-emoji .subtitle {
+  color: rgba(245, 247, 250, 0.7);
+}
+
+.hero.is-emoji .subtitle a,
+.hero.is-emoji .subtitle strong {
+  color: #f5f7fa;
 }

@@ -145,6 +145,10 @@ def add_emote(guild_id):
             flash('You have already reached the maximum number of emotes for this server', 'is-danger')
             return redirect(request.url)
 
+        if len(form.name.data) > 20:
+            flash('The name of your emote must be under 20 characters', 'is-danger')
+            return redirect(request.url)
+
         filename = secure_filename(form.emote.data.filename)
         actual_filename, ext = os.path.splitext(filename)
         if ext.lower() not in ('.png', '.jpg', '.jpeg'):

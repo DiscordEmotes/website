@@ -1,23 +1,36 @@
 {% extends "base.html" %}
 {% block body %}
 {%- for column in guilds | batch(3) %}
-  <div class="columns">
-    {%- for guild in column %}
-    <div class="column">
-      <article class="guild-entry media">
-        <div class="media-left">
-          <figure class="avatar image is-64x64">
-            <img src="{{ guild.icon_url | d('https://cdn.discordapp.com/embed/avatars/1.png', true) }}">
-          </figure>
-        </div>
-        <div class="media-content">
-          <div class="content">
-            <a href="{{ url_for('guild', guild_id=guild.id) }}">{{ guild.name }}</a>
-          </div>
-        </div>
-      </article>
+<section class="section">
+  <div class="container">
+    <div class="heading">
+      <h1 class="title">My Servers</h1>
     </div>
-    {%- endfor %}
+    <div class="content">
+      To view and edit the emotes for a server, click on the name of it below.
+    </div>
+    <div class="columns">
+      {%- for guild in column %}
+      <div class="column">
+        <article class="guild-entry media">
+          <div class="media-left">
+            <figure class="avatar image is-64x64">
+              <img src="{{ guild.icon_url | d('https://cdn.discordapp.com/embed/avatars/1.png', true) }}">
+            </figure>
+          </div>
+          <div class="media-content">
+            <div class="content">
+              <a href="{{ url_for('guild', guild_id=guild.id) }}">{{ guild.name }}</a>
+            </div>
+          </div>
+        </article>
+      </div>
+      {%- endfor %}
+    </div>
+    <div class="content">
+      If the list above is missing the server you want to edit, ensure you have <strong>Manage Server</strong> permissions on the server.
+    </div>
   </div>
+</section>
 {%- endfor %}
 {% endblock %}

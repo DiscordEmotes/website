@@ -2,51 +2,72 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-widthm initial-scale=1.0">
+  <meta name="viewport" content="width=device-width initial-scale=1.0">
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bulma.css') }}">
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='custom.css') }}">
   <title>{{ '%s - ' % title if title }}Discord Emotes</title>
 </head>
 <body>
-  <section class="hero is-light">
-    <div class="hero-head">
-      <nav class="nav">
-        <div class="container">
-          <div class="nav-left">
-            <a class="nav-item is-brand" href="{{ url_for('index') }}">Discord Emotes</a>
-          </div>
+  <nav class="nav has-shadow">
+    <div class="nav-left">
+      <a class="nav-item is-brand" href="{{ url_for('index') }}">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Discord Emotes logo">
+      </a>
+    </div>
 
-          <div class="nav-right nav-menu">
-            {% if not user %}
-            <span class="nav-item">
-              <a class="button is-primary" href="{{ url_for('login') }}">Login with Discord</a>
-            </span>
-            {% else %}
-            <a class="nav-item" href="{{ url_for('guilds') }}">
-              <span class="icon avatar">
-                <img src="{{ user.avatar_url }}">
-              </span>
-              <span>{{ user.name }}</span>
-            </a>
-            {% endif %}
-          </div>
-        </div>
-      </nav>
+    <div class="nav-right">
+      {% if not user %}
+      <span class="nav-item">
+        <a class="button is-primary" href="{{ url_for('login') }}">
+          <span>Login with Discord</span>
+        </a>
+      </span>
+      {% else %}
+      <span class="nav-item avatar is-hidden-touch">
+        <a href="{{ url_for('guilds') }}">
+          <img src="{{ user.avatar_url }}" alt="User avatar">
+        </a>
+      </span>
+      <span class="nav-item is-hidden-touch">
+        {{ user.name }}
+      </span>
+      <span class="nav-item">
+        <a class="button is-primary" href="{{ url_for('guilds') }}">
+          <span>My Servers</span>
+        </a>
+      </span>
+      {% endif %}
     </div>
-  </section>
-  <section class="section">
-    <div class="container">
-      {% with messages = get_flashed_messages(with_categories=True) %}
-        {% for category, message in messages %}
-          <div class="notification {{ category }}">
-            <button class="delete"></button> <!-- TODO: JS to actually close lol -->
-            {{ message }}
-          </div>
-        {% endfor %}
-      {% endwith %}
-      {% block body %}
-      {% endblock %}
+  </nav>
+  <div class="container">
+  {% with messages = get_flashed_messages(with_categories=True) %}
+    {% for category, message in messages %}
+      <br>
+      <div class="notification {{ category }}">
+        <button class="delete"></button> <!-- TODO: JS to actually close lol -->
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endwith %}
+  </div>
+  {% block body %}
+  {% endblock %}
+  <footer class="footer">
+  <div class="container">
+    <div class="content has-text-centered">
+      <p>
+        <br>We are not affiliated with <a href="http://discordapp.com" target="_blank">Hammer &amp; Chisel Inc</a>.
+      </p>
+      <p>
+        <a href="#">Terms</a> · <a href="#">Contact</a> · <a href="https://github.com/DiscordEmotes/website" target="_blank">GitHub</a>
+      </p>
+      <p>
+        <a class="icon" href="https://github.com/jgthms/bulma">
+          <i class="fa fa-github"></i>
+        </a>
+      </p>
     </div>
-  </section>
+  </div>
+</footer>
 </body>
 </html>
