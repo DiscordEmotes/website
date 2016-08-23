@@ -3,4 +3,5 @@
 *.db
 *.png
 *.jpg
+!/website/static/*.png
 config.py

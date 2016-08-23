@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block body %}
+<section class="hero is-medium">
+  <div class="hero-body">
+    <div class="container has-text-centered">
+      {% if image %}
+      <img class="image is-128x128 center" src="{{ url_for('static', filename=image) }}">
+      {% endif %}
+      <h1 class="title">
+        {{ error }}
+      </h1>
+      <h2 class="subtitle">
+        The page couldn't be loaded
+      </h2>
+      <a href="{{ url_for('index') }}" class="button is-medium">Go home</a>
+    </div>
+  </div>
+</section>
+{% endblock %}
