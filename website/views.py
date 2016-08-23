@@ -177,3 +177,13 @@ def add_emote(guild_id):
         return redirect(url_for('guild', guild_id=guild_id))
 
     return render_template('add_emote.html', form=form, user=user, guild=guild)
+
+@app.errorhandler(404)
+def not_found(e):
+    user = User.current()
+    return render_template('error.html', title='Not Found', user=user, error=e, image='404.png'), 404
+
+@app.errorhandler(403)
+def forbidden(e):
+    user = User.current()
+    return render_template('error.html', title='Forbidden', user=user, error=e, image='403.png'), 403
