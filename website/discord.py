@@ -27,9 +27,9 @@ def make_session(token=None, state=None):
 
 class User:
     def __init__(self, data):
+        self.id = int(data.get('id'))
         self.discriminator = data.get('discriminator')
         self.email = data.get('email')
-        self.id = data.get('id')
         self.mfa_enabled = data.get('mfa_enabled')
         self.name = data.get('username')
         self.verified = data.get('verified', False)
