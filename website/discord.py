@@ -1,5 +1,5 @@
 from flask import session
-from website import app
+from flask import current_app as app
 from requests_oauthlib import OAuth2Session
 import requests
 

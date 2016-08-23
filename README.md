@@ -22,6 +22,8 @@ OAUTH2_REDIRECT_URI = 'http://localhost:5000/callback'
 UPLOAD_FOLDER = 'base directory for file uploads'
 
 SECRET_KEY = OAUTH2_SECRET_KEY
+
+ADMIN_USER_IDS = ['123456789123456789']
 ```
 
 Next up do the following:

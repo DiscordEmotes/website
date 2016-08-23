@@ -3,7 +3,9 @@ import os
 
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
-from flask_admin import Admin
+from flask_admin import Admin, AdminIndexView, expose
+
+from .discord import User
 
 app = Flask(__name__)
 app.config.update(
@@ -21,7 +23,13 @@ except OSError:
     pass
 
 db = SQLAlchemy(app)
-admin = Admin(app, name='Discord Emotes', template_mode='bootstrap3')
+
+class CustomAdminIndexView(AdminIndexView):
+    def is_accessible(self):
+        user = User.current()
+        return user and user.id in app.config['ADMIN_USER_IDS']
+
+admin = Admin(app, name='Discord Emotes', template_mode='bootstrap3', index_view=CustomAdminIndexView())
 migrate = Migrate(app, db)
 
 if 'http://' in app.config['OAUTH2_REDIRECT_URI']:
