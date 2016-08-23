@@ -39,6 +39,10 @@ class EmoteView(ModelView):
 
             flash('Failed to verify emotes. %s' % str(e), 'error')
 
+    def is_accessible(self):
+        user = User.current()
+        return user and user.id in app.config['ADMIN_USER_IDS']
+
     def _filename_formatter(view, context, model, name):
         if not model.filename:
             return ''
