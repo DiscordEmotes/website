@@ -6,3 +6,4 @@ flask-migrate
 wtforms
 flask-wtf
 flask-admin
+Pillow

@@ -4,6 +4,8 @@ from flask import render_template, session, request, redirect, url_for, abort, f
 from flask_admin.contrib.sqla import ModelView
 from flask_admin.actions import action
 from jinja2 import Markup
+from PIL import Image
+import sys
 
 from .discord import make_session, User, Guild, DISCORD_AUTH_BASE_URL, DISCORD_TOKEN_URL
 from .models import Emote
@@ -126,6 +128,7 @@ def emote(guild_id, emote_id):
     emote = next(filter(lambda e: e.id == emote_id, emotes), None)
     if emote is None:
         abort(404)
+    print(emote.filename)
     return render_template('emote.html', user=user, emote=emote, guild=guild, title=emote.name)
 
 @app.route('/guilds/<int:guild_id>/emotes/new', methods=['GET', 'POST'])
@@ -149,32 +152,34 @@ def add_emote(guild_id):
             flash('The name of your emote must be under 20 characters', 'is-danger')
             return redirect(request.url)
 
-        filename = secure_filename(form.emote.data.filename)
-        actual_filename, ext = os.path.splitext(filename)
-        if ext.lower() not in ('.png', '.jpg', '.jpeg'):
-            flash('Unsupported file extension (%s).' % ext, 'is-danger')
-            return redirect(request.url)
-
         try:
-            width, height = get_image_size(form.emote.data.stream)
+            image = Image.open(form.emote.data)
         except Exception as e:
-            flash('Unsupported image type or image is too big.', 'is-danger')
+            flash('Invalid image', 'is-danger')
             return redirect(request.url)
 
-        if width > 128 or height > 128:
-            flash('Image too big (got %sx%s and expected 128x128 or lower)' % (width, height), 'is-danger')
+        if image.format not in ('JPEG', 'PNG'):
+            flash('Unsupported file extension (.%s).' % ext, 'is-danger')
             return redirect(request.url)
 
-        md5 = hashlib.md5(actual_filename.encode('utf-8', 'backslashreplace'))
-        hashed_filename = '{}{}'.format(md5.hexdigest(), ext)
+        if image.width > 128 or image.height > 128:
+            flash('Image too big (got %sx%s and expected 128x128 or lower)' % (image.width, image.height), 'is-danger')
+            return redirect(request.url)
+
+        if image.format == "PNG":
+            ext = "png"
+        else:
+            ext = "jpg"
+
+        sha224 = hashlib.sha224(guild.id.to_bytes(8, byteorder=sys.byteorder) + image.tobytes())
+        hashed_filename = '{}.{}'.format(sha224.hexdigest(), ext)
 
         emote = Emote(name=form.name.data,
                       owner_id=guild_id,
                       shared=form.shared.data,
                       filename=hashed_filename)
 
-        form.emote.data.seek(0)
-        form.emote.data.save(os.path.join(app.config['UPLOAD_FOLDER'], hashed_filename))
+        image.save(os.path.join(app.config['UPLOAD_FOLDER'], hashed_filename))
         db.session.add(emote)
         db.session.commit()
         flash('Successfully uploaded emote.', 'is-success')
