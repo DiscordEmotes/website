@@ -15,9 +15,7 @@
           <a href="{{ url_for('guild', guild_id=guild.id) }}">
             <article class="guild-entry media">
               <div class="media-left">
-                <figure class="avatar image is-64x64">
-                  <img src="{{ guild.icon_url | d('https://cdn.discordapp.com/embed/avatars/1.png', true) }}">
-                </figure>
+                <img class="avatar image is-64x64" src="{{ guild.icon_url | d('https://cdn.discordapp.com/embed/avatars/1.png', true) }}">
               </div>
               <div class="media-content">
                 <div class="content">

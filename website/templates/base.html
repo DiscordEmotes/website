@@ -23,8 +23,8 @@
           </a>
         </span>
       {% else %}
-        <a class="nav-item avatar" href="{{ url_for('guilds') }}">
-          <img src="{{ user.avatar_url }}" alt="User avatar">
+        <a class="nav-item" href="{{ url_for('guilds') }}">
+          <img class="avatar image is-32x32" src="{{ user.avatar_url }}" alt="User avatar">
           {{ user.name }}
         </a>
       {% endif %}

@@ -12,14 +12,7 @@ html {
     color: rgba(105, 112, 122, .7);
 }
 
-.icon.avatar {
-    background-repeat: no-repeat;
-    background-position: 50%;
-    width: 100px;
-    height: 100px;
-}
-
-.avatar img {
+.avatar {
     border-radius: 50%;
 }
 
@@ -54,10 +47,6 @@ html {
 .hero.is-emoji .subtitle a,
 .hero.is-emoji .subtitle strong {
   color: #f5f7fa;
-}
-
-.nav-item img {
-    max-height: 32px;
 }
 
 table.table tbody tr td {

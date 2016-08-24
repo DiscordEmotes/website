@@ -1,6 +1,6 @@
 from website import app, db, admin
 from werkzeug.utils import secure_filename
-from flask import render_template, session, request, redirect, url_for, abort, flash
+from flask import render_template, session, request, redirect, url_for, abort, flash, send_from_directory
 from flask_admin.contrib.sqla import ModelView
 from flask_admin.actions import action
 from jinja2 import Markup
@@ -9,7 +9,6 @@ import sys
 
 from .discord import make_session, User, Guild, DISCORD_AUTH_BASE_URL, DISCORD_TOKEN_URL
 from .models import Emote
-from .utils import get_image_size
 from .forms import EmoteUploadForm
 
 from gettext import ngettext
@@ -128,7 +127,6 @@ def emote(guild_id, emote_id):
     emote = next(filter(lambda e: e.id == emote_id, emotes), None)
     if emote is None:
         abort(404)
-    print(emote.filename)
     return render_template('emote.html', user=user, emote=emote, guild=guild, title=emote.name)
 
 @app.route('/guilds/<int:guild_id>/emotes/new', methods=['GET', 'POST'])
@@ -171,7 +169,7 @@ def add_emote(guild_id):
         else:
             ext = "jpg"
 
-        sha224 = hashlib.sha224(guild.id.to_bytes(8, byteorder=sys.byteorder) + image.tobytes())
+        sha224 = hashlib.sha224(image.tobytes())
         hashed_filename = '{}.{}'.format(sha224.hexdigest(), ext)
 
         emote = Emote(name=form.name.data,
@@ -179,10 +177,20 @@ def add_emote(guild_id):
                       shared=form.shared.data,
                       filename=hashed_filename)
 
-        image.save(os.path.join(app.config['UPLOAD_FOLDER'], hashed_filename))
+        try:
+            os.makedirs(os.path.join(app.config['UPLOAD_FOLDER'], str(guild_id)))
+        except OSError as exception:
+            if exception.errno != errno.EEXIST:
+                raise
+
+        image.save(os.path.join(app.config['UPLOAD_FOLDER'], emote.path()))
         db.session.add(emote)
         db.session.commit()
         flash('Successfully uploaded emote.', 'is-success')
         return redirect(url_for('guild', guild_id=guild_id))
 
     return render_template('add_emote.html', form=form, user=user, guild=guild)
+
+@app.route('/emotes/<int:guild_id>/<path:filename>')
+def static_emote(guild_id, filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], os.path.join(str(guild_id), str(filename)))

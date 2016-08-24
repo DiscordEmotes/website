@@ -21,13 +21,16 @@ class Emote(db.Model):
     def guild_emotes(cls, guild_id):
         return cls.query.filter_by(owner_id=guild_id).all()
 
+    def path(self):
+        return os.path.join(str(self.owner_id), self.filename)
+
 def handle_deletes(session, flush_context):
     # Delete all emotes in session.dirty
     for emote in session.deleted:
         if not isinstance(emote, Emote):
             continue
 
-        filename = os.path.join(app.config['UPLOAD_FOLDER'], emote.filename)
+        filename = os.path.join(app.config['UPLOAD_FOLDER'], emote.path())
         try:
             os.remove(filename)
         except OSError:

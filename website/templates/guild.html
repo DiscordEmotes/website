@@ -32,7 +32,7 @@
         <tbody>
           {% for emote in emotes %}
             <tr>
-              <td class="has-text-centered"><a href="{{ url_for('emote', guild_id=guild.id, emote_id=emote.id) }}"><img src="http://placehold.it/32x32"></a></td>
+              <td><a href="{{ url_for('emote', guild_id=guild.id, emote_id=emote.id) }}"><img class="image is-64x64 is-pulled-right" src="/emotes/{{ emote.path() }}"></a></td>
               <td><a href="{{ url_for('emote', guild_id=guild.id, emote_id=emote.id) }}">{{ emote.name }}</a></td>
               {% if emote.shared %}
                 <td><span class="tag is-success">Yes</span></td>
