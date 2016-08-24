@@ -5,7 +5,7 @@
     <div class="content">
       <div class="columns">
         <div class="column">
-          <h2>New Emote for <strong>{{ guild.name }}</strong></h2>
+          <h2>New Emote for <strong><a href="{{ url_for('guild', guild_id=guild.id) }}">{{ guild.name }}</a></strong></h2>
           <form method="POST" enctype="multipart/form-data">
             {{ form.csrf_token }}
 

@@ -1,5 +1,10 @@
 html {
-    background-color: white;
+    background-color: #fff;
+}
+
+.heading {
+    letter-spacing: 0px;
+    text-transform: none;
 }
 
 .hero.is-light .nav-item a:not(.button),
@@ -10,7 +15,6 @@ html {
 .icon.avatar {
     background-repeat: no-repeat;
     background-position: 50%;
-    border-radius: 50%;
     width: 100px;
     height: 100px;
 }
@@ -19,15 +23,19 @@ html {
     border-radius: 50%;
 }
 
+.nav-item.avatar img {
+    margin-right: 5px;
+}
+
 .guild-entry {
     border: 1px solid rgba(105, 112, 122, .2);
-    padding: 5px;
+    padding: 10px;
     display: flex;
     align-items: center;
 }
 
 .hero.is-emoji {
-    background: url(/static/bg.png) no-repeat center center fixed; 
+    background: url('/static/bg.png') no-repeat center center fixed;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
@@ -39,11 +47,6 @@ html {
   color: #f5f7fa;
 }
 
-.hero.is-emoji .title a,
-.hero.is-emoji .title strong {
-  color: inherit;
-}
-
 .hero.is-emoji .subtitle {
   color: rgba(245, 247, 250, 0.7);
 }
@@ -51,4 +54,12 @@ html {
 .hero.is-emoji .subtitle a,
 .hero.is-emoji .subtitle strong {
   color: #f5f7fa;
+}
+
+.nav-item img {
+    max-height: 32px;
+}
+
+table.table tbody tr td {
+    vertical-align: middle;
 }

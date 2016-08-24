@@ -6,7 +6,7 @@
       <h1 class="title">Welcome to Discord Emotes</h1>
     </div>
     <div class="content">
-      DiscordEmotes allows you to add personality to your Discord server through emotes. It's quick, easy, and hooks in directly with Discord - so no registration is required.
+      DiscordEmotes allows you to add personality to your Discord server through emotes. It's quick, easy, and hooks directly into Discord - no registration required.
     </div>
   </div>
 </section>
@@ -14,23 +14,21 @@
   <div class="hero-body">
     <div class="container">
       <div class="columns">
-        <div class="column has-text-right">
+        <div class="column has-text-centered">
           <h1 class="title">
             Start adding emotes now
           </h1>
           <h2 class="subtitle">
             Enhance your server!
           </h2>
-        </div>
-        <div class="column has-text-left">
           {% if not user %}
-          <a class="button is-primary is-large" href="{{ url_for('login') }}">
-            <span>Login with Discord</span>
-          </a>
+            <a class="button is-large" href="{{ url_for('login') }}">
+              <span>Login with Discord</span>
+            </a>
           {% else %}
-          <a class="button is-primary is-large" href="{{ url_for('guilds') }}">
-            <span>My Servers</span>
-          </a>
+            <a class="button is-large" href="{{ url_for('guilds') }}">
+              <span>My Servers</span>
+            </a>
           {% endif %}
         </div>
     </div>

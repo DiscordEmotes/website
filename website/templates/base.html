@@ -11,63 +11,57 @@
   <nav class="nav has-shadow">
     <div class="nav-left">
       <a class="nav-item is-brand" href="{{ url_for('index') }}">
-        <img src="{{ url_for('static', filename='logo.png') }}" alt="Discord Emotes logo">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Discord Emotes">
       </a>
     </div>
 
     <div class="nav-right">
       {% if not user %}
-      <span class="nav-item">
-        <a class="button is-primary" href="{{ url_for('login') }}">
-          <span>Login with Discord</span>
-        </a>
-      </span>
+        <span class="nav-item">
+          <a class="button is-primary" href="{{ url_for('login') }}">
+            Login with Discord
+          </a>
+        </span>
       {% else %}
-      <span class="nav-item avatar is-hidden-touch">
-        <a href="{{ url_for('guilds') }}">
+        <a class="nav-item avatar" href="{{ url_for('guilds') }}">
           <img src="{{ user.avatar_url }}" alt="User avatar">
+          {{ user.name }}
         </a>
-      </span>
-      <span class="nav-item is-hidden-touch">
-        {{ user.name }}
-      </span>
-      <span class="nav-item">
-        <a class="button is-primary" href="{{ url_for('guilds') }}">
-          <span>My Servers</span>
-        </a>
-      </span>
       {% endif %}
     </div>
   </nav>
   <div class="container">
-  {% with messages = get_flashed_messages(with_categories=True) %}
-    {% for category, message in messages %}
-      <br>
-      <div class="notification {{ category }}">
-        <button class="delete"></button> <!-- TODO: JS to actually close lol -->
-        {{ message }}
-      </div>
-    {% endfor %}
-  {% endwith %}
+    {% with messages = get_flashed_messages(with_categories=True) %}
+      {% for category, message in messages %}
+        <br>
+        <div class="notification {{ category }}">
+          <button class="delete"></button> <!-- TODO: JS to actually close lol -->
+          {{ message }}
+        </div>
+      {% endfor %}
+    {% endwith %}
   </div>
   {% block body %}
+    <div class="content has-text-centered">
+      <p>You have reached a glitch!</p>
+    </div>
   {% endblock %}
   <footer class="footer">
-  <div class="container">
-    <div class="content has-text-centered">
-      <p>
-        <br>We are not affiliated with <a href="http://discordapp.com" target="_blank">Hammer &amp; Chisel Inc</a>.
-      </p>
-      <p>
-        <a href="#">Terms</a> · <a href="#">Contact</a> · <a href="https://github.com/DiscordEmotes/website" target="_blank">GitHub</a>
-      </p>
-      <p>
-        <a class="icon" href="https://github.com/jgthms/bulma">
-          <i class="fa fa-github"></i>
-        </a>
-      </p>
+    <div class="container">
+      <div class="content has-text-centered">
+        <p>
+          <br>We are not affiliated with <a href="http://discordapp.com" target="_blank">Hammer &amp; Chisel Inc</a>.
+        </p>
+        <p>
+          <a href="#">Terms</a> · <a href="#">Contact</a> · <a href="https://github.com/DiscordEmotes/website" target="_blank">GitHub</a>
+        </p>
+        <p>
+          <a class="icon" href="https://github.com/jgthms/bulma">
+            <i class="fa fa-github"></i>
+          </a>
+        </p>
+      </div>
     </div>
-  </div>
-</footer>
+  </footer>
 </body>
 </html>
