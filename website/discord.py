@@ -1,7 +1,8 @@
 from flask import session
 from flask import current_app as app
 from requests_oauthlib import OAuth2Session
-import requests
+
+from . import cache
 
 DISCORD_API_URL         = 'https://discordapp.com/api'
 DISCORD_AUTH_BASE_URL   = DISCORD_API_URL + '/oauth2/authorize'
@@ -43,13 +44,18 @@ class User:
             return None
 
         with make_session(token=token) as discord:
-            user = discord.get(DISCORD_API_URL + '/users/@me')
-            if user.status_code == 401:
-                # our token is invalidated
-                session.pop('oauth2_token')
-                return None
+            data = cache.get_cached_user_data(token)
+            if data is None:
+                user = discord.get(DISCORD_API_URL + '/users/@me')
+                if user.status_code == 401:
+                    # our token is invalidated
+                    session.pop('oauth2_token')
+                    return None
 
-            return cls(user.json()) if user.status_code == 200 else None
+                data = user.json()
+                cache.set_cached_user_data(token, data)
+
+            return cls(data) if data else None
 
     @property
     def avatar_url(self):
@@ -74,13 +80,21 @@ class Guild:
             return []
 
         with make_session(token=token) as discord:
-            guilds = discord.get(DISCORD_API_URL + '/users/@me/guilds')
-            if guilds.status_code != 200:
-                session.pop('oauth2_token')
-                return []
+            servers = cache.get_cached_server_data(token)
+            if servers is None:
+                guilds = discord.get(DISCORD_API_URL + '/users/@me/guilds')
+                if guilds.status_code != 200:
+                    session.pop('oauth2_token')
+                    return []
+
+                data = guilds.json()
+                cache.set_cached_server_data(token, data)
+
+            else:
+                data = servers
 
             ret = []
-            data = guilds.json()
+
             for entry in data:
                 # check if the user has MANAGE_GUILD in
                 if entry['permissions'] & 0x00000020 == 0x00000020:

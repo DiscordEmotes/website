@@ -4,7 +4,7 @@ from wtforms import StringField, BooleanField
 from wtforms.validators import DataRequired, Length
 
 class EmoteUploadForm(Form):
-    emote = FileField('Emote', validators=[DataRequired()])
-    name  = StringField('Name', validators=[DataRequired(), Length(min=3, max=32)])
+    emote  = FileField('Emote', validators=[DataRequired()])
+    name   = StringField('Name', validators=[DataRequired(), Length(min=3, max=32)])
     shared = BooleanField('Enable sharing')
 

@@ -23,6 +23,8 @@ UPLOAD_FOLDER = 'base directory for file uploads'
 
 SECRET_KEY = OAUTH2_SECRET_KEY
 
+REDIS_CONN = ("127.0.0.1", 6379)
+
 ADMIN_USER_IDS = [123456789123456789]
 ```
 
