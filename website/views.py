@@ -6,6 +6,8 @@ from flask_admin.actions import action
 from jinja2 import Markup
 from PIL import Image
 import sys
+import errno
+import random
 
 from .discord import make_session, User, Guild, DISCORD_AUTH_BASE_URL, DISCORD_TOKEN_URL
 from .models import Emote
@@ -156,7 +158,8 @@ def add_emote(guild_id):
             flash('Invalid image', 'is-danger')
             return redirect(request.url)
 
-        if image.format not in ('JPEG', 'PNG'):
+        ext = image.format
+        if ext not in ('JPEG', 'PNG'):
             flash('Unsupported file extension (.%s).' % ext, 'is-danger')
             return redirect(request.url)
 
@@ -194,3 +197,14 @@ def add_emote(guild_id):
 @app.route('/emotes/<int:guild_id>/<path:filename>')
 def static_emote(guild_id, filename):
     return send_from_directory(os.path.join(app.config['UPLOAD_FOLDER'], str(guild_id)), filename)
+
+@app.route('/library')
+@app.route('/library/<int:page>')
+def library(page=1):
+    user = User.current()
+    if not user:
+        abort(404)
+    emotes = Emote.shared_emotes().paginate(page, int(app.config['EMOTES_PER_PAGE']), False)
+    if not emotes.items and page != 1:
+        abort(404)
+    return render_template('library.html', title='Shared Library', user=user, emotes=emotes)

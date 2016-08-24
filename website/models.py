@@ -21,6 +21,10 @@ class Emote(db.Model):
     def guild_emotes(cls, guild_id):
         return cls.query.filter_by(owner_id=guild_id).all()
 
+    @classmethod
+    def shared_emotes(cls):
+        return cls.query.filter_by(shared=True, verified=True)
+
     def path(self):
         return os.path.join(str(self.owner_id), self.filename)
 

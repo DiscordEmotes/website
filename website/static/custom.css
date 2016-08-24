@@ -14,9 +14,6 @@ html {
 
 .avatar {
     border-radius: 50%;
-}
-
-.nav-item.avatar img {
     margin-right: 5px;
 }
 
