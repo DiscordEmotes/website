@@ -17,7 +17,7 @@
       </div>
     </nav>
     <div class="content">
-      This is a list of all of the emotes that have been added to <strong>{{ guild.name }}</strong>. To add a new emote, press the <strong>Upload Emote</strong> button above, or search our <a href="#">Shared Library</a>.
+      This is a list of all of the emotes that have been added to <strong>{{ guild.name }}</strong>. To add a new emote, press the <strong>Upload Emote</strong> button above, or search our <a href="{{ url_for('library') }}">Shared Library</a>.
     </div>
     {% if emotes %}
       <table class="table">
