@@ -144,12 +144,12 @@ def add_emote(guild_id):
 
     form = EmoteUploadForm()
     if form.validate_on_submit():
-        if len(emotes) > 10:
+        if len(emotes) >= 10:
             flash('You have already reached the maximum number of emotes for this server', 'is-danger')
             return redirect(request.url)
 
         if len(form.name.data) > 20:
-            flash('The name of your emote must be under 20 characters', 'is-danger')
+            flash('The name of your emote must be 20 characters or less', 'is-danger')
             return redirect(request.url)
 
         try:

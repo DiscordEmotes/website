@@ -9,10 +9,13 @@
       This page contains the <strong>shared emotes</strong> that users have uploaded to Discord Emotes. To add one to your server, click on it in the list.
     </div>
     {% if emotes %}
-    <div class="columns is-multiline is-mobile">
+    <div class="columns is-multiline is-mobile is-centered">
       {% for emote in emotes.items %}
-        <div class="column is-narrow">
-          <img class="image is-64x64" src="/emotes/{{ emote.path() }}"></td>
+        <div class="column is-narrow is-emote">
+          <div class="shared-emote has-text-centered">
+            <img class="image is-48x48" src="/emotes/{{ emote.path() }}">
+            {{ emote.name }}
+          </div>
         </div>
       {% endfor %}
     </div>
@@ -23,7 +26,7 @@
         </div>
       </div>
     {% endif %}
-    <nav class="level">
+    <nav class="level is-mobile">
       <div class="level-left">
         <div class="level-item">
           {% if emotes.has_prev %}
