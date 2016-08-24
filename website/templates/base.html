@@ -7,7 +7,7 @@
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='custom.css') }}">
   <title>{{ '%s - ' % title if title }}Discord Emotes</title>
 </head>
-<body>
+<body class="site">
   <nav class="nav has-shadow">
     <div class="nav-left">
       <a class="nav-item is-brand" href="{{ url_for('index') }}">
@@ -35,22 +35,24 @@
       {% endif %}
     </div>
   </nav>
-  <div class="container">
-    {% with messages = get_flashed_messages(with_categories=True) %}
-      {% for category, message in messages %}
-        <br>
-        <div class="notification {{ category }}">
-          <button class="delete"></button> <!-- TODO: JS to actually close lol -->
-          {{ message }}
-        </div>
-      {% endfor %}
-    {% endwith %}
-  </div>
-  {% block body %}
-    <div class="content has-text-centered">
-      <p>You have reached a glitch!</p>
+  <main class="site-content">
+    <div class="container">
+      {% with messages = get_flashed_messages(with_categories=True) %}
+        {% for category, message in messages %}
+          <br>
+          <div class="notification {{ category }}">
+            <button class="delete"></button> <!-- TODO: JS to actually close lol -->
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endwith %}
     </div>
-  {% endblock %}
+    {% block body %}
+      <div class="content has-text-centered">
+        <p>You have reached a glitch!</p>
+      </div>
+    {% endblock %}
+  </main>
   <footer class="footer">
     <div class="container">
       <div class="content has-text-centered">
