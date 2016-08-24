@@ -193,4 +193,4 @@ def add_emote(guild_id):
 
 @app.route('/emotes/<int:guild_id>/<path:filename>')
 def static_emote(guild_id, filename):
-    return send_from_directory(app.config['UPLOAD_FOLDER'], os.path.join(str(guild_id), str(filename)))
+    return send_from_directory(os.path.join(app.config['UPLOAD_FOLDER'], str(guild_id)), filename)
