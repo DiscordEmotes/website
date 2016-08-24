@@ -7,3 +7,4 @@ wtforms
 flask-wtf
 flask-admin
 Pillow
+redis

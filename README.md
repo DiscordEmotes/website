@@ -8,6 +8,7 @@ Probably not.
 
 - Some undetermined python version
 - Flask
+- A redis server
 
 Just do `pip install -r requirements.txt`.
 
