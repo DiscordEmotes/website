@@ -23,9 +23,14 @@
           </a>
         </span>
       {% else %}
+        <span class="nav-item is-hidden-touch">
+          <a class="button is-primary" href="{{ url_for('library') }}">
+            Shared Library
+          </a>
+        </span>
+        </a>
         <a class="nav-item" href="{{ url_for('guilds') }}">
-          <img class="avatar image is-32x32" src="{{ user.avatar_url }}" alt="User avatar">
-          {{ user.name }}
+          <img class="avatar is-32x32" src="{{ user.avatar_url }}" alt="User avatar">{{ user.name }}
         </a>
       {% endif %}
     </div>
@@ -54,11 +59,6 @@
         </p>
         <p>
           <a href="#">Terms</a> · <a href="#">Contact</a> · <a href="https://github.com/DiscordEmotes/website" target="_blank">GitHub</a>
-        </p>
-        <p>
-          <a class="icon" href="https://github.com/jgthms/bulma">
-            <i class="fa fa-github"></i>
-          </a>
         </p>
       </div>
     </div>
