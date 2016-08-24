@@ -47,7 +47,7 @@ class EmoteView(ModelView):
     def _filename_formatter(view, context, model, name):
         if not model.filename:
             return ''
-        return Markup('<figure><img src="http://placehold.it/64x64"></figure>')
+        return Markup('<img style="width:32px;height:32px" src="%s">' % url_for('static_emote', guild_id=model.owner_id, filename=model.filename))
 
     def _bool_formatter(view, context, model, name):
         if getattr(model, name, False):
