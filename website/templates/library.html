@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block body %}
+<section class="section">
+  <div class="container">
+    <div class="heading">
+      <h1 class="title">Library</h1>
+    </div>
+    <div class="content">
+      This page contains the <strong>shared emotes</strong> that users have uploaded to Discord Emotes. To add one to your server, click on it in the list.
+    </div>
+    {% if emotes %}
+    <div class="columns is-multiline is-mobile">
+      {% for emote in emotes.items %}
+        <div class="column is-narrow">
+          <img class="image is-64x64" src="/emotes/{{ emote.path() }}"></td>
+        </div>
+      {% endfor %}
+    </div>
+    {% else %}
+      <div class="content">
+        <div class="notification">
+          Sorry, no emotes have been verified and shared.
+        </div>
+      </div>
+    {% endif %}
+    <nav class="level">
+      <div class="level-left">
+        <div class="level-item">
+          {% if emotes.has_prev %}
+            <a class="button" href="{{ url_for('library', page=emotes.prev_num) }}">Previous</a>
+          {% else %}
+            <a class="button is-disabled">Previous</a>
+          {% endif %}
+        </div>
+      </div>
+      <div class="level-right">
+        <div class="level-item">
+          {% if emotes.has_next %}
+            <a class="button" href="{{ url_for('library', page=emotes.next_num) }}">Next</a>
+          {% else %}
+            <a class="button is-disabled">Next</a>
+          {% endif %}
+        </div>
+      </div>
+    </nav>
+  </div>
+</section>
+{% endblock %}

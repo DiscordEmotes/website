@@ -8,6 +8,7 @@ Probably not.
 
 - Some undetermined python version
 - Flask
+- Pillow
 
 Just do `pip install -r requirements.txt`.
 
@@ -20,6 +21,8 @@ OAUTH2_CLIENT_ID = 'my client ID'
 OAUTH2_SECRET_KEY = 'my app secret'
 OAUTH2_REDIRECT_URI = 'http://localhost:5000/callback'
 UPLOAD_FOLDER = 'base directory for file uploads'
+
+EMOTES_PER_PAGE = 20
 
 SECRET_KEY = OAUTH2_SECRET_KEY
 
