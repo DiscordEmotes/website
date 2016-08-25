@@ -1,6 +1,6 @@
 from website import app, db, admin
 from werkzeug.utils import secure_filename
-from flask import render_template, session, request, redirect, url_for, abort, flash, send_from_directory
+from flask import render_template, session, request, redirect, url_for, abort, flash, send_from_directory, g
 from flask_admin.contrib.sqla import ModelView
 from flask_admin.actions import action
 from jinja2 import Markup
@@ -12,6 +12,7 @@ import random
 from .discord import make_session, User, Guild, DISCORD_AUTH_BASE_URL, DISCORD_TOKEN_URL
 from .models import Emote
 from .forms import EmoteUploadForm
+from .utils import login_required, guild_admin_required
 
 from gettext import ngettext
 import os, hashlib
@@ -68,9 +69,7 @@ admin.add_view(EmoteView(Emote, db.session))
 @app.route('/')
 @app.route('/index')
 def index():
-    user = User.current()
-    guilds = Guild.managed()
-    return render_template('index.html', user=user, guilds=guilds)
+    return render_template('index.html')
 
 def get_auth_url():
     with make_session() as discord:
@@ -98,48 +97,33 @@ def callback():
         return redirect(url_for('guilds'))
 
 @app.route('/guilds')
+@login_required
 def guilds():
-    user = User.current()
-    if user is None:
-        return redirect(get_auth_url())
-
-    guilds = Guild.managed()
-    return render_template('guilds.html', user=user, guilds=guilds, title='My Servers')
+    return render_template('guilds.html', title='My Servers')
 
 @app.route('/guilds/<int:guild_id>')
+@login_required
+@guild_admin_required
 def guild(guild_id):
-    user = User.current()
-    guilds = Guild.managed()
-    guild = next(filter(lambda g: g.id == guild_id, guilds), None)
-    if guild is None:
-        abort(404)
-
+    guild = g.managed_guild
     emotes = Emote.guild_emotes(guild_id)
-    return render_template('guild.html', user=user, emotes=emotes, guild=guild, title=guild.name)
+    return render_template('guild.html', emotes=emotes, guild=guild, title=guild.name)
 
 @app.route('/guilds/<int:guild_id>/emotes/<int:emote_id>')
+@guild_admin_required
 def emote(guild_id, emote_id):
-    user = User.current()
-    guilds = Guild.managed()
-    guild = next(filter(lambda g: g.id == guild_id, guilds), None)
-    if guild is None:
+    emote = Emote.query.get(emote_id)
+
+    # this check breaks when we allow shared emotes
+    if emote is None or emote.owner_id != guild_id:
         abort(404)
 
-    emotes = Emote.guild_emotes(guild_id)
-    emote = next(filter(lambda e: e.id == emote_id, emotes), None)
-    if emote is None:
-        abort(404)
-    return render_template('emote.html', user=user, emote=emote, guild=guild, title=emote.name)
+    return render_template('emote.html', guild=g.managed_guild, emote=emote, title=emote.name)
 
 @app.route('/guilds/<int:guild_id>/emotes/new', methods=['GET', 'POST'])
+@login_required
+@guild_admin_required
 def add_emote(guild_id):
-    # TODO: @app.before_request this noise
-    user = User.current()
-    guilds = Guild.managed()
-    guild = next(filter(lambda g: g.id == guild_id, guilds), None)
-    if guild is None:
-        abort(404)
-
     emotes = Emote.guild_emotes(guild_id)
 
     form = EmoteUploadForm()
@@ -201,10 +185,7 @@ def static_emote(guild_id, filename):
 @app.route('/library')
 @app.route('/library/<int:page>')
 def library(page=1):
-    user = User.current()
-    if not user:
-        abort(404)
     emotes = Emote.shared_emotes().paginate(page, int(app.config['EMOTES_PER_PAGE']), False)
     if not emotes.items and page != 1:
         abort(404)
-    return render_template('library.html', title='Shared Library', user=user, emotes=emotes)
+    return render_template('library.html', title='Shared Library', emotes=emotes)

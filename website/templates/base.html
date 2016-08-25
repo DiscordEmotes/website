@@ -16,7 +16,7 @@
     </div>
 
     <div class="nav-right">
-      {% if not user %}
+      {% if not g.user %}
         <span class="nav-item">
           <a class="button is-primary" href="{{ url_for('login') }}">
             Login with Discord
@@ -29,7 +29,7 @@
           </a>
         </span>
         <a class="nav-item" href="{{ url_for('guilds') }}">
-          <img class="avatar is-32x32" src="{{ user.avatar_url }}" alt="User avatar">{{ user.name }}
+          <img class="avatar is-32x32" src="{{ g.user.avatar_url }}" alt="User avatar">{{ g.user.name }}
         </a>
       {% endif %}
     </div>

@@ -1,11 +1,11 @@
-from flask import Flask
+from flask import Flask, g, request
 import os
 
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from flask_admin import Admin, AdminIndexView, expose
 
-from .discord import User
+from .discord import User, Guild
 
 app = Flask(__name__)
 app.config.update(
@@ -34,5 +34,10 @@ migrate = Migrate(app, db)
 
 if 'http://' in app.config['OAUTH2_REDIRECT_URI']:
     os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = 'true'
+
+@app.before_request
+def before_request():
+    g.user = User.current()
+    g.guilds = Guild.managed()
 
 from . import views, models

@@ -21,7 +21,7 @@
           <h2 class="subtitle">
             Enhance your server!
           </h2>
-          {% if not user %}
+          {% if not g.user %}
             <a class="button is-large" href="{{ url_for('login') }}">
               <span>Login with Discord</span>
             </a>

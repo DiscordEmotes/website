@@ -8,7 +8,7 @@
     <div class="content">
       To view and edit the emotes for a server, click on the name of it below.
     </div>
-    {%- for column in guilds | batch(3) %}
+    {%- for column in g.guilds | batch(3) %}
       <div class="columns">
         {%- for guild in column %}
         <div class="column">
