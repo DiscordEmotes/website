@@ -11,7 +11,7 @@ from werkzeug.contrib.cache import RedisCache
 def get_redis():
     if not hasattr(current_app, 'redis'):
         host, port = current_app.config["REDIS_CONN"]
-        cache = RedisCache(host, port)
+        cache = RedisCache(host, port, default_timeout=300)
 
         current_app.redis = cache
 
