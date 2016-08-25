@@ -31,6 +31,7 @@ SECRET_KEY = OAUTH2_SECRET_KEY
 REDIS_CONN = ("127.0.0.1", 6379)
 
 ADMIN_USER_IDS = [123456789123456789]
+BOT_TOKEN = 'bot token here'
 ```
 
 Make sure to create a PostgreSQL database and point the URI appropriately.

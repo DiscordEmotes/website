@@ -1,6 +1,7 @@
 from flask import session
 from flask import current_app as app
 from requests_oauthlib import OAuth2Session
+import requests
 
 from . import cache
 
@@ -109,3 +110,22 @@ class Guild:
 
         return 'https://cdn.discordapp.com/icons/{0.id}/{0.icon}.jpg'.format(self)
 
+def send_message(guild_id, content):
+    token = app.config.get('BOT_TOKEN')
+    if token is None:
+        return
+
+    headers = {
+        'Authorization': 'Bot %s' % token,
+    }
+    url = '%s/channels/%s/messages' % (DISCORD_API_URL, guild_id)
+    payload = {
+        'content': str(content),
+        'tts': False
+    }
+    r = requests.post(url, headers=headers, json=payload)
+
+    if r.status_code == 200:
+        return r.json()
+
+    return None

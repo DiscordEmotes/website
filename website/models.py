@@ -5,6 +5,7 @@ from flask_sqlalchemy import SignallingSession
 from sqlalchemy import event
 
 from website import db
+from .discord import send_message
 
 class Emote(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -42,5 +43,15 @@ def handle_deletes(session, flush_context):
         except OSError:
             continue
 
+        send_message(emote.owner_id, 'Emote "%s" has been deleted and can no longer be used.' % emote.name)
+
 # register to SignallingSession instead of db.session otherwise an ArgumentError is raised
 event.listen(SignallingSession, "after_flush", handle_deletes)
+
+@event.listens_for(Emote.verified, 'set')
+def verified_set(target, value, oldvalue, initiator):
+    # emote has become verified
+    if oldvalue is False and value is True:
+        send_message(target.owner_id, 'Emote "%s" has been verified and ready to use.' % target.name)
+    elif oldvalue is True and value is False:
+        send_message(target.owner_id, 'Emote "%s" has been unverified and can no longer be used.' % target.name)
