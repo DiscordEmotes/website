@@ -8,3 +8,4 @@ flask-wtf
 flask-admin
 Pillow
 redis
+psycopg2

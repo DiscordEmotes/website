@@ -12,7 +12,9 @@ class Emote(db.Model):
     owner_id = db.Column(db.BigInteger, index=True, nullable=False)
     name = db.Column(db.String(32), index=True, unique=True, nullable=False)
     verified = db.Column(db.Boolean, index=True, default=False)
-    filename = db.Column(db.String(32))
+    # SHA-224 is 224 bits, 4 bits per hex code means 224 / 4 = 56 characters
+    # then we add 4 for the extension and we get a maximum of 60 characters.
+    filename = db.Column(db.String(60))
 
     def __repr__(self):
         return '<Emote id={0.id} name={0.name} shared={0.shared}>'.format(self)

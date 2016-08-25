@@ -10,7 +10,6 @@ from .discord import User, Guild
 app = Flask(__name__)
 app.config.update(
     MAX_CONTENT_LENGTH=2*1024*1024, # 2 MiB max upload
-    SQLALCHEMY_DATABASE_URI='sqlite:///' + os.path.join(app.root_path, 'app.db'),
     SQLALCHEMY_TRACK_MODIFICATIONS=False
 )
 app.config.from_object('config')

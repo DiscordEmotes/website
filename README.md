@@ -22,6 +22,7 @@ OAUTH2_CLIENT_ID = 'my client ID'
 OAUTH2_SECRET_KEY = 'my app secret'
 OAUTH2_REDIRECT_URI = 'http://localhost:5000/callback'
 UPLOAD_FOLDER = 'base directory for file uploads'
+SQLALCHEMY_DATABASE_URI = 'postgresql://user:password@127.0.0.1/database'
 
 EMOTES_PER_PAGE = 20
 
@@ -31,6 +32,8 @@ REDIS_CONN = ("127.0.0.1", 6379)
 
 ADMIN_USER_IDS = [123456789123456789]
 ```
+
+Make sure to create a PostgreSQL database and point the URI appropriately.
 
 Next up do the following:
 
