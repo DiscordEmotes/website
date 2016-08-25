@@ -41,7 +41,7 @@ def handle_deletes(session, flush_context):
         try:
             os.remove(filename)
         except OSError:
-            continue
+            pass
 
         send_message(emote.owner_id, 'Emote "%s" has been deleted and can no longer be used.' % emote.name)
 

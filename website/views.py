@@ -159,6 +159,10 @@ def add_emote(guild_id):
         sha224 = hashlib.sha224(image.tobytes())
         hashed_filename = '{}.{}'.format(sha224.hexdigest(), ext)
 
+        if hashed_filename in [e.filename for e in emotes]:
+            flash('That image is already used for an emote. Choose another image.', 'is-danger')
+            return redirect(request.url)
+
         emote = Emote(name=form.name.data,
                       owner_id=guild_id,
                       shared=form.shared.data,
