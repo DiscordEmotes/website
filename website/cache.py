@@ -3,16 +3,18 @@ Caching utilities
 """
 import json
 
-import redis
 from flask import current_app
+
+from werkzeug.contrib.cache import RedisCache
 
 
 def get_redis():
-    if hasattr(current_app, "redis") and current_app.redis is not None:
-        return current_app.redis
+    if not hasattr(current_app, 'redis'):
+        host, port = current_app.config["REDIS_CONN"]
+        cache = RedisCache(host, port)
 
-    host, port = current_app.config["REDIS_CONN"]
-    current_app.redis = redis.StrictRedis(host=host, port=port)
+        current_app.redis = cache
+
     return current_app.redis
 
 
@@ -22,13 +24,13 @@ def get_cached_user_data(token):
     key = "user" + json.dumps(token, sort_keys=True)
     d = r.get(key)
     if d:
-        return json.loads(d.decode())
+        return json.loads(d)
 
 
 def set_cached_user_data(token, data, expiration=300):
     r = get_redis()
     key = "user" + json.dumps(token, sort_keys=True)
-    r.set(key, json.dumps(data), ex=expiration)
+    r.set(key, json.dumps(data), timeout=expiration)
     return data
 
 
@@ -37,10 +39,10 @@ def get_cached_server_data(token):
     key = "server" + json.dumps(token, sort_keys=True)
     d = r.get(key)
     if d:
-        return json.loads(d.decode())
+        return json.loads(d)
 
 
 def set_cached_server_data(token, data, expiration=300):
     r = get_redis()
     key = "server" + json.dumps(token, sort_keys=True)
-    r.set(key, json.dumps(data), ex=expiration)
+    r.set(key, json.dumps(data), timeout=expiration)
