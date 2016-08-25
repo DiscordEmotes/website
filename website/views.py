@@ -109,7 +109,7 @@ def guild(guild_id):
     emotes = Emote.guild_emotes(guild_id)
     return render_template('guild.html', emotes=emotes, guild=guild, title=guild.name)
 
-@app.route('/guilds/<int:guild_id>/emotes/<int:emote_id>')
+@app.route('/guilds/<int:guild_id>/emotes/<int:emote_id>', methods=['GET', 'POST'])
 @guild_admin_required
 def emote(guild_id, emote_id):
     emote = Emote.query.get(emote_id)
@@ -117,6 +117,17 @@ def emote(guild_id, emote_id):
     # this check breaks when we allow shared emotes
     if emote is None or emote.owner_id != guild_id:
         abort(404)
+
+    if request.method == 'POST':
+        if 'toggle' in request.form:
+            emote.shared = not emote.shared
+            db.session.commit()
+            flash('Emote updated.', 'is-success')
+        elif 'delete' in request.form:
+            db.session.delete(emote)
+            db.session.commit()
+            flash('Emote deleted.', 'is-success')
+            return redirect(url_for('guild', guild_id=guild_id))
 
     return render_template('emote.html', guild=g.managed_guild, emote=emote, title=emote.name)
 

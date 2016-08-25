@@ -5,7 +5,7 @@
     <div class="content">
       <h1>{{ emote.name }}</h1>
       {% if not emote.verified %}
-      <div class="notification is-warning">
+      <div class="notification">
         This emote is pending approval. You won't be able to use it in Discord yet.
       </div>
       {% endif %}
@@ -40,17 +40,14 @@
           </div>
         </div>
         <div class="level-right">
-          <div class="level-item"><a class="button is-info">
-            {% if emote.shared %}
-            Make private
-            {% else %}
-            Make shared
-            {% endif %}
+          <div class="level-item"><form method="POST" enctype="multipart/form-data"><input class="button is-info" type="submit" name="toggle" value="{{ 'Make Private' if emote.shared else 'Make Shared' }}"></form>
           </a></div>
-          <div class="level-item"><a class="button is-danger">Delete emote</a></div>
+          <div class="level-item"><form method="POST" enctype="multipart/form-data"><input class="button is-danger" type="submit" name="delete" value="Delete Emote" onclick="return confirm('Are you sure you want to delete this emote?');"></div></form>
         </div>
       </nav>
     </div>
   </div>
 </section>
+<script>
+</script>
 {% endblock %} 
