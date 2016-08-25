@@ -15,7 +15,7 @@
   <meta property="og:type" content="website" />
   <meta property="og:url" content="{{ request.url }}" />
   <meta property="og:description" content="{{ desc if desc else 'Discord Emotes allows you to add more personality to your Discord server through emotes! Free, quick and easy.' }}" />
-  <meta property="og:image" content="{{ request.url_root }}static/meta-img.png" />
+  <meta property="og:image" content="{{ url_for('static', filename='meta-img.png', _external=True) }}" />
   <meta property="og:site_name" content="Discord Emotes" />
 </head>
 <body class="site">
