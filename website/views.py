@@ -176,7 +176,7 @@ def add_emote(guild_id):
         flash('Successfully uploaded emote.', 'is-success')
         return redirect(url_for('guild', guild_id=guild_id))
 
-    return render_template('add_emote.html', form=form, user=user, guild=guild)
+    return render_template('add_emote.html', form=form, guild=g.managed_guild)
 
 @app.route('/emotes/<int:guild_id>/<path:filename>')
 def static_emote(guild_id, filename):
