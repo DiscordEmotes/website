@@ -8,7 +8,7 @@
     <div class="content">
       This page contains the <strong>shared emotes</strong> that users have uploaded to Discord Emotes. To add one to your server, click on it in the list.
     </div>
-    {% if emotes %}
+    {% if emotes.items %}
     <div class="columns is-multiline is-mobile is-centered">
       {% for emote in emotes.items %}
         <div class="column is-narrow is-emote">
