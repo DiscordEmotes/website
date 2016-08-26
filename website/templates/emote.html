@@ -5,7 +5,7 @@
     <div class="content">
       <h1>{{ emote.name }}</h1>
       {% if not emote.verified %}
-      <div class="notification">
+      <div class="notification is-warning">
         This emote is pending approval. You won't be able to use it in Discord yet.
       </div>
       {% endif %}
@@ -13,7 +13,9 @@
         <tbody>
           <tr>
             <td><strong>Emote</strong></td>
-            <td><figure class="image is-128x128"><img src="/emotes/{{ emote.path() }}"></figure></td>
+            <td>
+                <img src="/emotes/{{ emote.path() }}">
+            </td>
           </tr>
           <tr>
             <td><strong>Name</strong></td>
