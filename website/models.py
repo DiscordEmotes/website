@@ -3,6 +3,8 @@ import os
 from flask import current_app as app
 from flask_sqlalchemy import SignallingSession
 from sqlalchemy import event
+from sqlalchemy import inspect
+from sqlalchemy.orm.unitofwork import UOWTransaction
 
 from website import db
 from .discord import send_message
@@ -31,8 +33,23 @@ class Emote(db.Model):
     def path(self):
         return os.path.join(str(self.owner_id), self.filename)
 
+def handle_verifies(session, flush_context: UOWTransaction):
+    # Handles verification checking on emotes.
+    for emote in session.dirty:
+        if not isinstance(emote, Emote):
+            # Ignore it
+            continue
+
+        history = inspect(emote).attrs.verified.history
+        if history.added and history.added[0]:
+            verified = True
+        else:
+            verified = False
+
+        # TODO: Do whatever with the verified status.
+
 def handle_deletes(session, flush_context):
-    # Delete all emotes in session.dirty
+    # Delete all emotes in session.deleted
     for emote in session.deleted:
         if not isinstance(emote, Emote):
             continue
@@ -47,11 +64,4 @@ def handle_deletes(session, flush_context):
 
 # register to SignallingSession instead of db.session otherwise an ArgumentError is raised
 event.listen(SignallingSession, "after_flush", handle_deletes)
-
-@event.listens_for(Emote.verified, 'set')
-def verified_set(target, value, oldvalue, initiator):
-    # emote has become verified
-    if oldvalue is False and value is True:
-        send_message(target.owner_id, 'Emote "%s" has been verified and ready to use.' % target.name)
-    elif oldvalue is True and value is False:
-        send_message(target.owner_id, 'Emote "%s" has been unverified and can no longer be used.' % target.name)
+event.listen(SignallingSession, "after_flush", handle_verifies)

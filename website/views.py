@@ -30,13 +30,16 @@ class EmoteView(ModelView):
         try:
             new_ids = [int(i) for i in ids]
 
-            # TODO: potentially modify this to call some Emote.verify() function
-            # that triggers a callback instead of calling update on filter
-            query = Emote.query.filter(Emote.id.in_(new_ids)).update(dict(verified=True), synchronize_session='fetch')
+            # .update() sucks
+            emotes = Emote.query.filter(Emote.id.in_(new_ids)).all()
+            for emote in emotes:
+                emote.verified = True
+
             db.session.commit()
+
             flash(ngettext('Emote successfully verified.',
-                           '%s emotes were successfully verified.' % query,
-                           query))
+                           '%s emotes were successfully verified.' % len(emotes),
+                           emotes))
         except Exception as e:
             if not self.handle_view_exception(e):
                 raise
@@ -50,7 +53,8 @@ class EmoteView(ModelView):
     def _filename_formatter(view, context, model, name):
         if not model.filename:
             return ''
-        return Markup('<img style="width:32px;height:32px" src="%s">' % url_for('static_emote', guild_id=model.owner_id, filename=model.filename))
+        return Markup('<img style="width:32px;height:32px" src="%s">' % url_for('static_emote', guild_id=model.owner_id,
+                                                                                filename=model.filename))
 
     def _bool_formatter(view, context, model, name):
         if getattr(model, name, False):
