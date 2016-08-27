@@ -6,6 +6,7 @@ from sqlalchemy import inspect
 from sqlalchemy.orm.unitofwork import UOWTransaction
 
 import os
+import requests
 
 db = SQLAlchemy()
 migrate = Migrate()
