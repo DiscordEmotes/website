@@ -91,6 +91,13 @@ class Guild(db.Model):
         db.session.bulk_insert_mappings(cls, insert_mappings)
         db.session.commit()
 
+    @property
+    def icon_url(self):
+        if self.icon is None:
+            return None
+
+        return 'https://cdn.discordapp.com/icons/{0.id}/{0.icon}.jpg'.format(self)
+
 def handle_verifies(session, flush_context: UOWTransaction):
     # Handles verification checking on emotes.
     for emote in session.dirty:

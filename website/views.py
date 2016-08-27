@@ -10,10 +10,10 @@ import errno
 import random
 import os, hashlib
 
-from .discord import make_session, DISCORD_AUTH_BASE_URL, DISCORD_TOKEN_URL
-from .models import Emote, db
+from .discord import make_session, BriefGuild, DISCORD_AUTH_BASE_URL, DISCORD_TOKEN_URL
+from .models import Emote, Guild, db
 from .forms import EmoteUploadForm
-from .utils import login_required, guild_admin_required
+from .utils import login_required, guild_admin_required, public_guild_required
 
 main = Blueprint('main', __name__)
 
@@ -31,6 +31,11 @@ def get_auth_url():
 @main.route('/login')
 def login():
     return redirect(get_auth_url())
+
+@main.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('.index'))
 
 @main.route('/callback')
 def callback():
@@ -53,12 +58,11 @@ def guilds():
     return render_template('guilds.html', title='My Servers')
 
 @main.route('/guilds/<int:guild_id>')
-@login_required
-@guild_admin_required
+@public_guild_required
 def guild(guild_id):
-    guild = g.managed_guild
     emotes = Emote.guild_emotes(guild_id)
-    return render_template('guild.html', emotes=emotes, guild=guild, title=guild.name)
+    can_manage = type(g.guild) is BriefGuild
+    return render_template('guild.html', emotes=emotes, can_manage=can_manage, guild=g.guild, title=g.guild.name)
 
 @main.route('/guilds/<int:guild_id>/emotes/<int:emote_id>', methods=['GET', 'POST'])
 @guild_admin_required

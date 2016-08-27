@@ -1,5 +1,6 @@
 from functools import wraps
 from flask import g, request, redirect, url_for, abort
+from .models import Guild
 
 def login_required(f):
     """Decorator that makes the view require logging in.
@@ -31,4 +32,30 @@ def guild_admin_required(f):
             abort(404)
         return f(*args, **kwargs)
 
+    return decorator
+
+def public_guild_required(f):
+    """Decorator that makes the view require a public guild.
+
+    If the guild is not found or is not public then the view aborts
+    with 404. The resulting guild is stored under ``g.guild``.
+
+    Follows similar rules to :func:`guild_admin_required`.
+    """
+
+    @wraps(f)
+    def decorator(*args, **kwargs):
+        guild_id = request.view_args.get('guild_id')
+
+        # get the guild with the guild_id from our own guild list
+        guild = next(filter(lambda s: s.id == guild_id, g.guilds), None)
+
+        # if it isn't available, check if it's a public guild
+        if guild is None:
+            guild = Guild.query.get_or_404(guild_id)
+            if guild.public is not True:
+                abort(404)
+
+        g.guild = guild
+        return f(*args, **kwargs)
     return decorator

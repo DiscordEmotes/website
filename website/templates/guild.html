@@ -10,14 +10,20 @@
           </div>
         </div>
       </div>
+      {% if can_manage %}
       <div class="level-right">
         <div class="level-item"><a href="{{ url_for('main.add_emote', guild_id=guild.id) }}" class="button is-primary">
           Upload Emote
         </a></div>
       </div>
+      {% endif %}
     </nav>
     <div class="content">
+      {% if can_manage %}
       This is a list of all of the emotes that have been added to <strong>{{ guild.name }}</strong>. To add a new emote, press the <strong>Upload Emote</strong> button above, or search our <a href="{{ url_for('main.library') }}">Shared Library</a>.
+      {% else %}
+      This is a list of all of the emotes that have been added to <strong>{{ guild.name }}</strong>.
+      {% endif %}
     </div>
     {% if emotes %}
       <table class="table">
@@ -51,7 +57,7 @@
     {% else %}
       <div class="content">
         <div class="notification">
-          This server currently has no emotes. <a href="{{ url_for('main.add_emote', guild_id=guild.id) }}">Why not add some?</a>
+          This server currently has no emotes.{% if can_manage %} <a href="{{ url_for('main.add_emote', guild_id=guild.id) }}">Why not add some?</a> {% endif %}
         </div>
       </div>
     {% endif %}
