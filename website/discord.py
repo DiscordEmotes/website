@@ -4,10 +4,12 @@ from requests_oauthlib import OAuth2Session
 import requests
 
 from . import cache
+from . import models
 
 DISCORD_API_URL         = 'https://discordapp.com/api'
 DISCORD_AUTH_BASE_URL   = DISCORD_API_URL + '/oauth2/authorize'
 DISCORD_TOKEN_URL       = DISCORD_API_URL + '/oauth2/token'
+
 
 def token_updater(token):
     session['oauth2_token'] = token
@@ -101,6 +103,10 @@ class Guild:
                 if entry['permissions'] & 0x00000020 == 0x00000020:
                     ret.append(cls(entry))
 
+            # update the database with the guild info if needed
+            if servers is None:
+                models.Guild.upsert_from(ret)
+
             return ret
 
     @property
@@ -109,23 +115,3 @@ class Guild:
             return None
 
         return 'https://cdn.discordapp.com/icons/{0.id}/{0.icon}.jpg'.format(self)
-
-def send_message(guild_id, content):
-    token = app.config.get('BOT_TOKEN')
-    if token is None:
-        return
-
-    headers = {
-        'Authorization': 'Bot %s' % token,
-    }
-    url = '%s/channels/%s/messages' % (DISCORD_API_URL, guild_id)
-    payload = {
-        'content': str(content),
-        'tts': False
-    }
-    r = requests.post(url, headers=headers, json=payload)
-
-    if r.status_code == 200:
-        return r.json()
-
-    return None

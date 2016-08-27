@@ -1,11 +1,8 @@
 from flask import Flask, g
-from flask_migrate import Migrate
 
 import os
 
 from . import views, models, admin_views, discord
-
-migrate = Migrate(models.db)
 
 def before_request():
     g.user = discord.User.current()
@@ -32,9 +29,9 @@ def create_app(conf):
     app.before_request(before_request)
 
     # extension lazy init
-    migrate.init_app(app)
     admin_views.admin.init_app(app)
     models.db.init_app(app)
+    models.migrate.init_app(app, models.db)
 
     app.register_blueprint(views.main)
     return app

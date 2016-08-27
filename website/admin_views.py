@@ -5,7 +5,7 @@ from flask import flash, current_app, url_for
 from jinja2 import Markup
 from gettext import ngettext
 
-from .models import Emote, db
+from .models import Emote, Guild, db
 from .discord import User
 
 class CustomAdminIndexView(AdminIndexView):
@@ -14,6 +14,11 @@ class CustomAdminIndexView(AdminIndexView):
         return user and user.id in current_app.config['ADMIN_USER_IDS']
 
 admin = Admin(name='Discord Emotes', template_mode='bootstrap3', index_view=CustomAdminIndexView())
+
+def _bool_formatter(view, context, model, name):
+    if getattr(model, name, False):
+        return 'Yes'
+    return 'No'
 
 class EmoteView(ModelView):
     column_searchable_list = ['name', 'owner_id']
@@ -54,16 +59,16 @@ class EmoteView(ModelView):
         return Markup('<img style="width:32px;height:32px" src="%s">' % url_for('main.static_emote', guild_id=model.owner_id,
                                                                                 filename=model.filename))
 
-    def _bool_formatter(view, context, model, name):
-        if getattr(model, name, False):
-            return 'Yes'
-        return 'No'
-
     column_formatters = {
         'filename': _filename_formatter,
         'shared': _bool_formatter,
         'verified': _bool_formatter
     }
 
+class GuildView(ModelView):
+    column_formatters = {
+        'public': _bool_formatter
+    }
 
 admin.add_view(EmoteView(Emote, db.session))
+admin.add_view(GuildView(Guild, db.session))

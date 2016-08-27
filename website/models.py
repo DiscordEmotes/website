@@ -1,14 +1,35 @@
 from flask import current_app as app
 from flask_sqlalchemy import SignallingSession, SQLAlchemy
+from flask_migrate import Migrate
 from sqlalchemy import event
 from sqlalchemy import inspect
 from sqlalchemy.orm.unitofwork import UOWTransaction
 
 import os
 
-from .discord import send_message
-
 db = SQLAlchemy()
+migrate = Migrate()
+
+def send_message(guild_id, content):
+    token = app.config.get('BOT_TOKEN')
+    if token is None:
+        return
+
+    headers = {
+        'Authorization': 'Bot %s' % token,
+    }
+    url = 'https://discordapp.com/api/v6/channels/%s/messages' % guild_id
+    payload = {
+        'content': str(content),
+        'tts': False
+    }
+    r = requests.post(url, headers=headers, json=payload)
+
+    if r.status_code == 200:
+        return r.json()
+
+    return None
+
 
 class Emote(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -33,6 +54,42 @@ class Emote(db.Model):
 
     def path(self):
         return os.path.join(str(self.owner_id), self.filename)
+
+class Guild(db.Model):
+    id = db.Column(db.BigInteger, primary_key=True, autoincrement=False)
+    icon = db.Column(db.String)
+    name = db.Column(db.String)
+    public = db.Column(db.Boolean, default=True)
+
+    @classmethod
+    def upsert_from(cls, guilds):
+        cached = {s.id: s for s in guilds}
+
+        # updates
+        update_mappings = []
+        for existing in cls.query.filter(cls.id.in_(set(cached.keys()))).all():
+            new_guild = cached[existing.id]
+            mapping = {
+                'id': existing.id,
+                'name': new_guild.name,
+                'icon': new_guild.icon
+            }
+            update_mappings.append(mapping)
+            cached.pop(existing.id)
+
+        # inserts
+        insert_mappings = [
+            {
+                'id': guild.id,
+                'name': guild.name,
+                'icon': guild.icon
+            }
+            for guild in cached.values()
+        ]
+
+        db.session.bulk_update_mappings(cls, update_mappings)
+        db.session.bulk_insert_mappings(cls, insert_mappings)
+        db.session.commit()
 
 def handle_verifies(session, flush_context: UOWTransaction):
     # Handles verification checking on emotes.
