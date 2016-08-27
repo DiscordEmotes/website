@@ -10,7 +10,7 @@ import errno
 import random
 import os, hashlib
 
-from .discord import make_session, User, Guild, DISCORD_AUTH_BASE_URL, DISCORD_TOKEN_URL
+from .discord import make_session, DISCORD_AUTH_BASE_URL, DISCORD_TOKEN_URL
 from .models import Emote, db
 from .forms import EmoteUploadForm
 from .utils import login_required, guild_admin_required

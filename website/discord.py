@@ -67,7 +67,7 @@ class User:
             return 'https://cdn.discordapp.com/embed/avatars/{}.png'.format(default)
         return 'https://cdn.discordapp.com/avatars/{0.id}/{0.avatar}.jpg'.format(self)
 
-class Guild:
+class BriefGuild:
     def __init__(self, data):
         self.id = int(data.get('id'))
         self.name = data.get('name')
@@ -77,7 +77,7 @@ class Guild:
 
     @classmethod
     def managed(cls):
-        """Returns the Guilds that the current user has Manage Server on."""
+        """Returns the BriefGuild that the current user has Manage Server on."""
         token = session.get('oauth2_token')
         if token is None:
             return []

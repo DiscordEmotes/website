@@ -6,7 +6,7 @@ from . import views, models, admin_views, discord
 
 def before_request():
     g.user = discord.User.current()
-    g.guilds = discord.Guild.managed()
+    g.guilds = discord.BriefGuild.managed()
 
 def create_app(conf):
     app = Flask(__name__)
