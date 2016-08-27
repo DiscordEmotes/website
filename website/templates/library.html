@@ -30,7 +30,7 @@
       <div class="level-left">
         <div class="level-item">
           {% if emotes.has_prev %}
-            <a class="button" href="{{ url_for('library', page=emotes.prev_num) }}">Previous</a>
+            <a class="button" href="{{ url_for('main.library', page=emotes.prev_num) }}">Previous</a>
           {% else %}
             <a class="button is-disabled">Previous</a>
           {% endif %}
@@ -39,7 +39,7 @@
       <div class="level-right">
         <div class="level-item">
           {% if emotes.has_next %}
-            <a class="button" href="{{ url_for('library', page=emotes.next_num) }}">Next</a>
+            <a class="button" href="{{ url_for('main.library', page=emotes.next_num) }}">Next</a>
           {% else %}
             <a class="button is-disabled">Next</a>
           {% endif %}

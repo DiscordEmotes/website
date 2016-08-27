@@ -11,13 +11,13 @@
         </div>
       </div>
       <div class="level-right">
-        <div class="level-item"><a href="{{ url_for('add_emote', guild_id=guild.id) }}" class="button is-primary">
+        <div class="level-item"><a href="{{ url_for('main.add_emote', guild_id=guild.id) }}" class="button is-primary">
           Upload Emote
         </a></div>
       </div>
     </nav>
     <div class="content">
-      This is a list of all of the emotes that have been added to <strong>{{ guild.name }}</strong>. To add a new emote, press the <strong>Upload Emote</strong> button above, or search our <a href="{{ url_for('library') }}">Shared Library</a>.
+      This is a list of all of the emotes that have been added to <strong>{{ guild.name }}</strong>. To add a new emote, press the <strong>Upload Emote</strong> button above, or search our <a href="{{ url_for('main.library') }}">Shared Library</a>.
     </div>
     {% if emotes %}
       <table class="table">
@@ -32,8 +32,8 @@
         <tbody>
           {% for emote in emotes %}
             <tr>
-              <td><a href="{{ url_for('emote', guild_id=guild.id, emote_id=emote.id) }}"><img class="image is-64x64 is-pulled-right" src="/emotes/{{ emote.path() }}"></a></td>
-              <td><a href="{{ url_for('emote', guild_id=guild.id, emote_id=emote.id) }}">{{ emote.name }}</a></td>
+              <td><a href="{{ url_for('main.emote', guild_id=guild.id, emote_id=emote.id) }}"><img class="image is-64x64 is-pulled-right" src="/emotes/{{ emote.path() }}"></a></td>
+              <td><a href="{{ url_for('main.emote', guild_id=guild.id, emote_id=emote.id) }}">{{ emote.name }}</a></td>
               {% if emote.shared %}
                 <td><span class="tag is-success">Yes</span></td>
               {% else %}
@@ -51,7 +51,7 @@
     {% else %}
       <div class="content">
         <div class="notification">
-          This server currently has no emotes. <a href="{{ url_for('add_emote', guild_id=guild.id) }}">Why not add some?</a>
+          This server currently has no emotes. <a href="{{ url_for('main.add_emote', guild_id=guild.id) }}">Why not add some?</a>
         </div>
       </div>
     {% endif %}

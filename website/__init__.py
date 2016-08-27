@@ -1,42 +1,40 @@
-from flask import Flask, g, request
+from flask import Flask, g
+from flask_migrate import Migrate
+
 import os
 
-from flask_migrate import Migrate
-from flask_sqlalchemy import SQLAlchemy
-from flask_admin import Admin, AdminIndexView, expose
+from . import views, models, admin_views, discord
 
-from .discord import User, Guild
+migrate = Migrate(models.db)
 
-app = Flask(__name__)
-app.config.update(
-    MAX_CONTENT_LENGTH=2*1024*1024, # 2 MiB max upload
-    SQLALCHEMY_TRACK_MODIFICATIONS=False
-)
-app.config.from_object('config')
-
-app.config['UPLOAD_FOLDER'] = os.path.realpath(app.config['UPLOAD_FOLDER'])
-
-try:
-    os.makedirs(app.config['UPLOAD_FOLDER'])
-except OSError:
-    pass
-
-db = SQLAlchemy(app)
-
-class CustomAdminIndexView(AdminIndexView):
-    def is_accessible(self):
-        user = User.current()
-        return user and user.id in app.config['ADMIN_USER_IDS']
-
-admin = Admin(app, name='Discord Emotes', template_mode='bootstrap3', index_view=CustomAdminIndexView())
-migrate = Migrate(app, db)
-
-if 'http://' in app.config['OAUTH2_REDIRECT_URI']:
-    os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = 'true'
-
-@app.before_request
 def before_request():
-    g.user = User.current()
-    g.guilds = Guild.managed()
+    g.user = discord.User.current()
+    g.guilds = discord.Guild.managed()
 
-from . import views, models
+def create_app(conf):
+    app = Flask(__name__)
+    app.config.update(
+        MAX_CONTENT_LENGTH=2*1024*1024, # 2 MiB max upload
+        SQLALCHEMY_TRACK_MODIFICATIONS=False
+    )
+    app.config.from_object(conf)
+
+    app.config['UPLOAD_FOLDER'] = os.path.realpath(app.config['UPLOAD_FOLDER'])
+
+    try:
+        os.makedirs(app.config['UPLOAD_FOLDER'])
+    except OSError:
+        pass
+
+    if 'http://' in app.config['OAUTH2_REDIRECT_URI']:
+        os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = 'true'
+
+    app.before_request(before_request)
+
+    # extension lazy init
+    migrate.init_app(app)
+    admin_views.admin.init_app(app)
+    models.db.init_app(app)
+
+    app.register_blueprint(views.main)
+    return app

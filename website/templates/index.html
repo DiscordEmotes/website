@@ -22,11 +22,11 @@
             Enhance your server!
           </h2>
           {% if not g.user %}
-            <a class="button is-large" href="{{ url_for('login') }}">
+            <a class="button is-large" href="{{ url_for('main.login') }}">
               <span>Login with Discord</span>
             </a>
           {% else %}
-            <a class="button is-large" href="{{ url_for('guilds') }}">
+            <a class="button is-large" href="{{ url_for('main.guilds') }}">
               <span>My Servers</span>
             </a>
           {% endif %}

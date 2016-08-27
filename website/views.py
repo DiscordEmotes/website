@@ -1,77 +1,24 @@
-from website import app, db, admin
 from werkzeug.utils import secure_filename
-from flask import render_template, session, request, redirect, url_for, abort, flash, send_from_directory, g
-from flask_admin.contrib.sqla import ModelView
-from flask_admin.actions import action
-from jinja2 import Markup
+from flask import session, request, g
+from flask import render_template, flash
+from flask import redirect, url_for, send_from_directory
+from flask import Blueprint, current_app
+
 from PIL import Image
 import sys
 import errno
 import random
+import os, hashlib
 
 from .discord import make_session, User, Guild, DISCORD_AUTH_BASE_URL, DISCORD_TOKEN_URL
-from .models import Emote
+from .models import Emote, db
 from .forms import EmoteUploadForm
 from .utils import login_required, guild_admin_required
 
-from gettext import ngettext
-import os, hashlib
+main = Blueprint('main', __name__)
 
-class EmoteView(ModelView):
-    column_searchable_list = ['name', 'owner_id']
-    column_filters = ['verified', 'shared']
-    column_labels = {
-        'owner_id': 'Guild ID',
-        'filename': 'Emote'
-    }
-
-    @action('verify', 'Verify', 'Are you sure you want to verify the selected emotes?')
-    def action_verify(self, ids):
-        try:
-            new_ids = [int(i) for i in ids]
-
-            # .update() sucks
-            emotes = Emote.query.filter(Emote.id.in_(new_ids)).all()
-            for emote in emotes:
-                emote.verified = True
-
-            db.session.commit()
-
-            flash(ngettext('Emote successfully verified.',
-                           '%s emotes were successfully verified.' % len(emotes),
-                           emotes))
-        except Exception as e:
-            if not self.handle_view_exception(e):
-                raise
-
-            flash('Failed to verify emotes. %s' % str(e), 'error')
-
-    def is_accessible(self):
-        user = User.current()
-        return user and user.id in app.config['ADMIN_USER_IDS']
-
-    def _filename_formatter(view, context, model, name):
-        if not model.filename:
-            return ''
-        return Markup('<img style="width:32px;height:32px" src="%s">' % url_for('static_emote', guild_id=model.owner_id,
-                                                                                filename=model.filename))
-
-    def _bool_formatter(view, context, model, name):
-        if getattr(model, name, False):
-            return 'Yes'
-        return 'No'
-
-    column_formatters = {
-        'filename': _filename_formatter,
-        'shared': _bool_formatter,
-        'verified': _bool_formatter
-    }
-
-
-admin.add_view(EmoteView(Emote, db.session))
-
-@app.route('/')
-@app.route('/index')
+@main.route('/')
+@main.route('/index')
 def index():
     return render_template('index.html')
 
@@ -81,31 +28,31 @@ def get_auth_url():
         session['oauth2_state'] = state
         return url
 
-@app.route('/login')
+@main.route('/login')
 def login():
     return redirect(get_auth_url())
 
-@app.route('/callback')
+@main.route('/callback')
 def callback():
     state = session.get('oauth2_state')
     if not state and request.values.get('error'):
-        return redirect(url_for('index'))
+        return redirect(url_for('.index'))
 
     with make_session(state=state) as discord:
         token = discord.fetch_token(DISCORD_TOKEN_URL,
-                                    client_secret=app.config['OAUTH2_SECRET_KEY'],
+                                    client_secret=current_app.config['OAUTH2_SECRET_KEY'],
                                     authorization_response=request.url)
 
         session['oauth2_token'] = token
         session.permanent = True
-        return redirect(url_for('guilds'))
+        return redirect(url_for('.guilds'))
 
-@app.route('/guilds')
+@main.route('/guilds')
 @login_required
 def guilds():
     return render_template('guilds.html', title='My Servers')
 
-@app.route('/guilds/<int:guild_id>')
+@main.route('/guilds/<int:guild_id>')
 @login_required
 @guild_admin_required
 def guild(guild_id):
@@ -113,7 +60,7 @@ def guild(guild_id):
     emotes = Emote.guild_emotes(guild_id)
     return render_template('guild.html', emotes=emotes, guild=guild, title=guild.name)
 
-@app.route('/guilds/<int:guild_id>/emotes/<int:emote_id>', methods=['GET', 'POST'])
+@main.route('/guilds/<int:guild_id>/emotes/<int:emote_id>', methods=['GET', 'POST'])
 @guild_admin_required
 def emote(guild_id, emote_id):
     emote = Emote.query.get(emote_id)
@@ -131,11 +78,11 @@ def emote(guild_id, emote_id):
             db.session.delete(emote)
             db.session.commit()
             flash('Emote deleted.', 'is-success')
-            return redirect(url_for('guild', guild_id=guild_id))
+            return redirect(url_for('.guild', guild_id=guild_id))
 
     return render_template('emote.html', guild=g.managed_guild, emote=emote, title=emote.name)
 
-@app.route('/guilds/<int:guild_id>/emotes/new', methods=['GET', 'POST'])
+@main.route('/guilds/<int:guild_id>/emotes/new', methods=['GET', 'POST'])
 @login_required
 @guild_admin_required
 def add_emote(guild_id):
@@ -184,27 +131,27 @@ def add_emote(guild_id):
                       filename=hashed_filename)
 
         try:
-            os.makedirs(os.path.join(app.config['UPLOAD_FOLDER'], str(guild_id)))
+            os.makedirs(os.path.join(current_app.config['UPLOAD_FOLDER'], str(guild_id)))
         except OSError as exception:
             if exception.errno != errno.EEXIST:
                 raise
 
-        image.save(os.path.join(app.config['UPLOAD_FOLDER'], emote.path()))
+        image.save(os.path.join(current_app.config['UPLOAD_FOLDER'], emote.path()))
         db.session.add(emote)
         db.session.commit()
         flash('Successfully uploaded emote.', 'is-success')
-        return redirect(url_for('guild', guild_id=guild_id))
+        return redirect(url_for('.guild', guild_id=guild_id))
 
     return render_template('add_emote.html', form=form, guild=g.managed_guild)
 
-@app.route('/emotes/<int:guild_id>/<path:filename>')
+@main.route('/emotes/<int:guild_id>/<path:filename>')
 def static_emote(guild_id, filename):
-    return send_from_directory(os.path.join(app.config['UPLOAD_FOLDER'], str(guild_id)), filename)
+    return send_from_directory(os.path.join(current_app.config['UPLOAD_FOLDER'], str(guild_id)), filename)
 
-@app.route('/library')
-@app.route('/library/<int:page>')
+@main.route('/library')
+@main.route('/library/<int:page>')
 def library(page=1):
-    emotes = Emote.shared_emotes().paginate(page, int(app.config['EMOTES_PER_PAGE']), False)
+    emotes = Emote.shared_emotes().paginate(page, int(current_app.config['EMOTES_PER_PAGE']), False)
     if not emotes.items and page != 1:
         abort(404)
     return render_template('library.html', title='Shared Library', emotes=emotes)

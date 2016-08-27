@@ -1,10 +1,6 @@
-import click
-from website import app, db
+from website import create_app
 
-@app.cli.command()
-def initdb():
-    db.create_all()
-    click.echo('Made a database.')
+app = create_app('config')
 
 if __name__ == '__main__':
     app.run(debug=True)

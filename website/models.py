@@ -1,13 +1,14 @@
-import os
-
 from flask import current_app as app
-from flask_sqlalchemy import SignallingSession
+from flask_sqlalchemy import SignallingSession, SQLAlchemy
 from sqlalchemy import event
 from sqlalchemy import inspect
 from sqlalchemy.orm.unitofwork import UOWTransaction
 
-from website import db
+import os
+
 from .discord import send_message
+
+db = SQLAlchemy()
 
 class Emote(db.Model):
     id = db.Column(db.Integer, primary_key=True)

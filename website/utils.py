@@ -10,7 +10,7 @@ def login_required(f):
     @wraps(f)
     def decorator(*args, **kwargs):
         if g.user is None:
-            return redirect(url_for('index'))
+            return redirect(url_for('main.index'))
         return f(*args, **kwargs)
     return decorator
 
