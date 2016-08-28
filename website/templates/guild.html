@@ -38,7 +38,7 @@
         <tbody>
           {% for emote in emotes %}
             <tr>
-              <td><a href="{{ url_for('main.emote', guild_id=guild.id, emote_id=emote.id) }}"><img class="image is-64x64 is-pulled-right" src="/emotes/{{ emote.path() }}"></a></td>
+              <td><a href="{{ url_for('main.emote', guild_id=emote.owner_id, emote_id=emote.id) }}"><img class="image is-64x64 is-pulled-right" src="/emotes/{{ emote.path() }}"></a></td>
               <td><a href="{{ url_for('main.emote', guild_id=emote.owner_id, emote_id=emote.id) }}">{{ emote.name }}</a></td>
               {% if emote.shared %}
                 <td><span class="tag is-success">Yes</span></td>
