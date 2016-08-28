@@ -13,8 +13,10 @@
       {% for emote in emotes.items %}
         <div class="column is-narrow is-emote">
           <div class="shared-emote has-text-centered">
-            <img class="image is-48x48" src="/emotes/{{ emote.path() }}">
-            {{ emote.name }}
+            <a href="{{ url_for('main.emote', guild_id=emote.owner_id, emote_id=emote.id) }}">
+              <img class="image is-48x48" src="/emotes/{{ emote.path() }}">
+              {{ emote.name }}
+            </a>
           </div>
         </div>
       {% endfor %}
