@@ -11,7 +11,7 @@ import random
 import os, hashlib
 
 from .discord import make_session, BriefGuild, DISCORD_AUTH_BASE_URL, DISCORD_TOKEN_URL
-from .models import Emote, Guild, db
+from .models import Emote, Guild, db, guild_emotes, add_shared_emote
 from .forms import EmoteUploadForm
 from .utils import login_required, guild_admin_required, public_guild_required, get_guild_or_404
 
@@ -60,7 +60,7 @@ def guilds():
 @main.route('/guilds/<int:guild_id>')
 @public_guild_required
 def guild(guild_id):
-    emotes = Emote.guild_emotes(guild_id)
+    emotes = guild_emotes(guild_id)
     can_manage = isinstance(g.guild, BriefGuild)
     return render_template('guild.html', emotes=emotes, can_manage=can_manage, guild=g.guild, title=g.guild.name)
 
@@ -72,16 +72,35 @@ def emote(guild_id, emote_id):
         abort(404)
 
     can_manage = isinstance(guild, BriefGuild)
-    if request.method == 'POST' and can_manage:
-        if 'toggle' in request.form:
-            emote.shared = not emote.shared
-            db.session.commit()
-            flash('Emote updated.', 'is-success')
-        elif 'delete' in request.form:
-            db.session.delete(emote)
-            db.session.commit()
-            flash('Emote deleted.', 'is-success')
-            return redirect(url_for('.guild', guild_id=guild_id))
+    if request.method == 'POST':
+        if can_manage:
+            if 'toggle' in request.form:
+                emote.shared = not emote.shared
+                db.session.commit()
+                flash('Emote updated.', 'is-success')
+            elif 'delete' in request.form:
+                db.session.delete(emote)
+                db.session.commit()
+                flash('Emote deleted.', 'is-success')
+                return redirect(url_for('.guild', guild_id=guild_id))
+
+        guild_added = request.form.get('guild_added')
+        if guild_added is not None and emote.shared:
+            try:
+                requested_guild_id = int(guild_added)
+            except Exception:
+                return redirect(request.url)
+
+            # verify we can manage the guild
+            managed = next(filter(lambda s: s.id == requested_guild_id, g.guilds), None)
+            if managed:
+                try:
+                    add_shared_emote(requested_guild_id, emote)
+                except RuntimeError as e:
+                    flash(str(e), 'is-danger')
+                else:
+                    flash('Emote added to %s' % managed.name, 'is-success')
+                    return redirect(url_for('.guild', guild_id=requested_guild_id))
 
     return render_template('emote.html', guild=guild, can_manage=can_manage, emote=emote, title=emote.name)
 
@@ -89,7 +108,7 @@ def emote(guild_id, emote_id):
 @login_required
 @guild_admin_required
 def add_emote(guild_id):
-    emotes = Emote.guild_emotes(guild_id)
+    emotes = guild_emotes(guild_id)
 
     form = EmoteUploadForm()
     if form.validate_on_submit():
