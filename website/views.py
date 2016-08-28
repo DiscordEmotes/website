@@ -87,7 +87,7 @@ def emote(guild_id, emote_id):
                 return redirect(url_for('.guild', guild_id=guild_id))
 
         guild_added = request.form.get('guild_added')
-        if guild_added is not None and emote.shared:
+        if guild_added is not None and emote.shared and emote.verified:
             try:
                 requested_guild_id = int(guild_added)
             except Exception:

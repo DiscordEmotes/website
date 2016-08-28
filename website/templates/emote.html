@@ -14,7 +14,7 @@
       {% endif %}
 
       <h1 class="is-pulled-left">{{ emote.name }}</h1>
-      {% if g.guilds and emote.shared %}
+      {% if g.guilds and emote.shared and emote.verified %}
       <div class="is-pulled-right">
         <form method="POST" enctype="multipart/form-data">
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
@@ -66,7 +66,7 @@
       </table>
 
       {% if can_manage %}
-      <div class="is-pulled-right">
+      <div class="is-pulled-right" style="padding-bottom: 20px">
         <form method="POST" enctype="multipart/form-data">
           <p class="control">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
