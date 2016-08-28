@@ -3,6 +3,7 @@ from flask import session, request, g
 from flask import render_template, flash
 from flask import redirect, url_for, send_from_directory, abort
 from flask import Blueprint, current_app
+from flask_wtf.csrf import CsrfProtect
 
 from PIL import Image
 import sys
@@ -16,6 +17,7 @@ from .forms import EmoteUploadForm
 from .utils import login_required, guild_admin_required, public_guild_required, get_guild_or_404
 
 main = Blueprint('main', __name__)
+csrf = CsrfProtect()
 
 @main.route('/')
 @main.route('/index')

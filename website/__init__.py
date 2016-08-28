@@ -32,6 +32,7 @@ def create_app(conf):
     admin_views.admin.init_app(app)
     models.db.init_app(app)
     models.migrate.init_app(app, models.db)
+    views.csrf.init_app(app)
 
     app.register_blueprint(views.main)
     return app
