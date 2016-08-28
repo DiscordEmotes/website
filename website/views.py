@@ -1,3 +1,4 @@
+from sqlalchemy.exc import IntegrityError
 from werkzeug.utils import secure_filename
 from flask import session, request, g
 from flask import render_template, flash
@@ -129,6 +130,10 @@ def add_emote(guild_id):
             flash('The name of your emote must be 20 characters or less', 'is-danger')
             return redirect(request.url)
 
+        if db.session.query(db.exists().where(Emote.name == form.name.data)).scalar():
+            flash('An emote already exists with this name.', 'is-danger')
+            return redirect(request.url)
+
         try:
             image = Image.open(form.emote.data)
         except Exception as e:
@@ -161,6 +166,11 @@ def add_emote(guild_id):
                       shared=form.shared.data,
                       filename=hashed_filename)
 
+        # Commit before we add the emote.
+        # This allows us to catch an IntegrityError which is thrown if the emote name already exists.
+        db.session.add(emote)
+        db.session.commit()
+
         try:
             os.makedirs(os.path.join(current_app.config['UPLOAD_FOLDER'], str(guild_id)))
         except OSError as exception:
@@ -168,8 +178,6 @@ def add_emote(guild_id):
                 raise
 
         image.save(os.path.join(current_app.config['UPLOAD_FOLDER'], emote.path()))
-        db.session.add(emote)
-        db.session.commit()
         flash('Successfully uploaded emote.', 'is-success')
         return redirect(url_for('.guild', guild_id=guild_id))
 
