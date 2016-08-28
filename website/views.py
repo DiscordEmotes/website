@@ -154,7 +154,7 @@ def static_emote(guild_id, filename):
 @main.route('/library')
 @main.route('/library/<int:page>')
 def library(page=1):
-    emotes = Emote.shared_emotes().paginate(page, int(current_app.config['EMOTES_PER_PAGE']), False)
+    emotes = Emote.all_shared_emotes().paginate(page, int(current_app.config['EMOTES_PER_PAGE']), False)
     if not emotes.items and page != 1:
         abort(404)
     return render_template('library.html', title='Shared Library', emotes=emotes)

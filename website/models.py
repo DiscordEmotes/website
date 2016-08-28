@@ -31,7 +31,6 @@ def send_message(guild_id, content):
 
     return None
 
-
 class Emote(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     shared = db.Column(db.Boolean, index=True, nullable=False, default=False)
@@ -50,7 +49,7 @@ class Emote(db.Model):
         return cls.query.filter_by(owner_id=guild_id).all()
 
     @classmethod
-    def shared_emotes(cls):
+    def all_shared_emotes(cls):
         return cls.query.filter_by(shared=True, verified=True)
 
     def path(self):
