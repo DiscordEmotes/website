@@ -126,14 +126,6 @@ def add_emote(guild_id):
             flash('You have already reached the maximum number of emotes for this server', 'is-danger')
             return redirect(request.url)
 
-        if len(form.name.data) > 20:
-            flash('The name of your emote must be 20 characters or less', 'is-danger')
-            return redirect(request.url)
-
-        if db.session.query(db.exists().where(Emote.name == form.name.data)).scalar():
-            flash('An emote already exists with this name.', 'is-danger')
-            return redirect(request.url)
-
         try:
             image = Image.open(form.emote.data)
         except Exception as e:
@@ -169,7 +161,10 @@ def add_emote(guild_id):
         # Commit before we add the emote.
         # This allows us to catch an IntegrityError which is thrown if the emote name already exists.
         db.session.add(emote)
-        db.session.commit()
+        try:
+            db.session.commit()
+        except IntegrityError:
+            return redirect(request.url)
 
         try:
             os.makedirs(os.path.join(current_app.config['UPLOAD_FOLDER'], str(guild_id)))
