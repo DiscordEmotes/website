@@ -34,6 +34,14 @@ def guild_admin_required(f):
 
     return decorator
 
+def get_guild_or_404(guild_id):
+    # search our own guild list
+    ret = next(filter(lambda s: s.id == guild_id, g.guilds), None)
+    if ret is None:
+        # fallback to the database
+        ret = Guild.query.get_or_404(guild_id)
+    return ret
+
 def public_guild_required(f):
     """Decorator that makes the view require a public guild.
 
@@ -48,13 +56,9 @@ def public_guild_required(f):
         guild_id = request.view_args.get('guild_id')
 
         # get the guild with the guild_id from our own guild list
-        guild = next(filter(lambda s: s.id == guild_id, g.guilds), None)
-
-        # if it isn't available, check if it's a public guild
-        if guild is None:
-            guild = Guild.query.get_or_404(guild_id)
-            if guild.public is not True:
-                abort(404)
+        guild = get_guild_or_404(guild_id)
+        if guild.public is not True:
+            abort(404)
 
         g.guild = guild
         return f(*args, **kwargs)

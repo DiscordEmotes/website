@@ -6,7 +6,11 @@
       <h1>{{ emote.name }}</h1>
       {% if not emote.verified %}
       <div class="notification is-warning">
+        {% if can_manage %}
         This emote is pending approval. You won't be able to use it in Discord yet.
+        {% else %}
+        This emote is pending approval. It won't be able to be used in Discord yet.
+        {% endif %}
       </div>
       {% endif %}
       <table class="table">
@@ -36,11 +40,14 @@
         </tbody>
       </table>
       <nav class="level">
+        {% if guild.public %}
         <div class="level-left">
           <div class="level-item">
               <a href="{{ url_for('main.guild', guild_id=guild.id) }}" class="button is-primary">Back to {{ guild.name }}</a>
           </div>
         </div>
+        {% endif %}
+        {% if can_manage %}
         <div class="level-right">
           <div class="level-item">
             <form method="POST" enctype="multipart/form-data">
@@ -49,6 +56,7 @@
             </form>
           </div>
         </div>
+        {% endif %}
       </nav>
     </div>
   </div>

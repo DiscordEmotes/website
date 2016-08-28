@@ -115,3 +115,9 @@ class BriefGuild:
             return None
 
         return 'https://cdn.discordapp.com/icons/{0.id}/{0.icon}.jpg'.format(self)
+
+    @property
+    def public(self):
+        # compat with Guild DB model
+        return True
+

@@ -13,7 +13,7 @@ import os, hashlib
 from .discord import make_session, BriefGuild, DISCORD_AUTH_BASE_URL, DISCORD_TOKEN_URL
 from .models import Emote, Guild, db
 from .forms import EmoteUploadForm
-from .utils import login_required, guild_admin_required, public_guild_required
+from .utils import login_required, guild_admin_required, public_guild_required, get_guild_or_404
 
 main = Blueprint('main', __name__)
 
@@ -61,19 +61,18 @@ def guilds():
 @public_guild_required
 def guild(guild_id):
     emotes = Emote.guild_emotes(guild_id)
-    can_manage = type(g.guild) is BriefGuild
+    can_manage = isinstance(g.guild, BriefGuild)
     return render_template('guild.html', emotes=emotes, can_manage=can_manage, guild=g.guild, title=g.guild.name)
 
 @main.route('/guilds/<int:guild_id>/emotes/<int:emote_id>', methods=['GET', 'POST'])
-@guild_admin_required
 def emote(guild_id, emote_id):
-    emote = Emote.query.get(emote_id)
-
-    # this check breaks when we allow shared emotes
-    if emote is None or emote.owner_id != guild_id:
+    guild = get_guild_or_404(guild_id)
+    emote = Emote.query.get_or_404(emote_id)
+    if emote.owner_id != guild_id:
         abort(404)
 
-    if request.method == 'POST':
+    can_manage = isinstance(guild, BriefGuild)
+    if request.method == 'POST' and can_manage:
         if 'toggle' in request.form:
             emote.shared = not emote.shared
             db.session.commit()
@@ -84,7 +83,7 @@ def emote(guild_id, emote_id):
             flash('Emote deleted.', 'is-success')
             return redirect(url_for('.guild', guild_id=guild_id))
 
-    return render_template('emote.html', guild=g.managed_guild, emote=emote, title=emote.name)
+    return render_template('emote.html', guild=guild, can_manage=can_manage, emote=emote, title=emote.name)
 
 @main.route('/guilds/<int:guild_id>/emotes/new', methods=['GET', 'POST'])
 @login_required
