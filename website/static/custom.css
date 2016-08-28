@@ -60,28 +60,31 @@ table.table tbody tr td {
     flex: 1;
 }
 
-.shared-emote {
+.shared-box {
     padding: 7px;
     align-items: center;
     text-align: center;
     background: #f5f5f5;
     font-size: 12px;
-    width: 100px;
-    height: 80px;
     vertical-align: middle;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-.shared-emote img {
+.shared-box img {
     display: block;
     margin: auto;
     width: 40%;
 }
 
-.column.is-emote {
-    padding: 2px;
+.is-shared-emote {
+    width: 100px;
+    height: 80px;
+}
+
+.is-shared-guild {
+    width: 100px;
 }
 
 .columns.is-centered {

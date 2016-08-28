@@ -104,7 +104,14 @@ def emote(guild_id, emote_id):
                     flash('Emote added to %s' % managed.name, 'is-success')
                     return redirect(url_for('.guild', guild_id=requested_guild_id))
 
-    return render_template('emote.html', guild=guild, can_manage=can_manage, emote=emote, title=emote.name)
+    context = {
+        'guild': guild,
+        'can_manage': can_manage,
+        'shared_guilds': [s for s in emote.shared_guilds if s.public],
+        'emote': emote,
+        'title': emote.name
+    }
+    return render_template('emote.html', **context)
 
 @main.route('/guilds/<int:guild_id>/emotes/new', methods=['GET', 'POST'])
 @login_required
