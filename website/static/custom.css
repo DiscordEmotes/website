@@ -91,3 +91,53 @@ table.table tbody tr td {
     margin: auto;
     padding: 10px;
 }
+
+.nav.has-shadow {
+    box-shadow: 0 2px 3px #ddd;
+}
+
+.nav .nav-item {
+    position: relative;
+}
+
+.nav .nav-item ul {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: #fff;
+    width: 100%;
+    border: 1px solid #ddd;
+    border-top: 0;
+    z-index: 5;
+}
+
+.nav .nav-right .nav-item ul {
+    left: auto;
+    right: 0;
+}
+
+.nav .nav-item ul li {
+    float: none;
+    width: 100%;
+    padding: 5px;
+    background-color: #fff;
+}
+
+.nav .nav-item ul li a {
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+}
+
+.nav .nav-item ul li:hover {
+    background-color: #ddd;
+}
+
+.nav .nav-item:hover>ul {
+    display: block;
+}
+
+.nav .nav-item>a {
+    line-height: 24px;
+}
