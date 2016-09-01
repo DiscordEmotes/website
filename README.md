@@ -4,6 +4,17 @@ Maybe.
 
 Probably not.
 
+## State
+
+This project is dead.
+
+```
+[10:54 PM] Jake: hi no asking yet
+[10:54 PM] Jake: busy day today getting ready for tomorrow's launch
+[10:55 PM] Jake: im gonna be honest. may not be worth building
+[10:55 PM] Jake: we're probably going to build it ourself very soon
+```
+
 ## Requirements
 
 - Some undetermined python version
